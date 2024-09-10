@@ -1,0 +1,17 @@
+{
+  "name": "opencx-oapi-ts",
+  "description": "Type-safe client for the OpenCX API",
+  "main": "index.ts",
+  "scripts": {
+    "gen": "curl -o spec.json https://api.open.cx/api-json && npx openapi-typescript ./spec.json -o spec.d.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://openchatai/opencx-oapi-ts"
+  },
+  "author": "OpenCX",
+  "license": "MIT",
+  "dependencies": {
+    "openapi-fetch": "^0.12.0"
+  }
+}
