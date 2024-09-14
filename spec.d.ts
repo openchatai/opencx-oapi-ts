@@ -246,10 +246,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sequences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a sequence */
+        post: operations["createSequence"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sequences/{sequence_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a sequence */
+        get: operations["getSequence"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update a sequence */
+        patch: operations["updateSequence"];
+        trace?: never;
+    };
+    "/sequences/{sequence_id}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Start a oneoff sequence
+         * @description
+         *     Start a oneoff sequence.
+         *     - The sequence must have the `is_continuous` property set to `false`
+         *     - The sequence must not have been previously canceled
+         *
+         */
+        put: operations["startSequence"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sequences/{sequence_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Cancel a sequence */
+        put: operations["cancelSequence"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sequences/{sequence_id}/contacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add contacts to a continuous sequence
+         * @description
+         *     Add contacts to a continuous sequence (`is_continuous` property of the sequence must be `true`).
+         *     Contacts will *not* be added to the sequence if the sequence's `filter` does not apply to the contact.
+         *
+         *     Any contacts added will automatically be added to contacts if they don't already exist.
+         *
+         */
+        post: operations["addContactsToSequence"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AddContactsToSequenceInput: {
+            contacts: ({
+                /** Format: uuid */
+                id: string;
+            } | {
+                /** Format: email */
+                email: string;
+            } | {
+                phone_number: string;
+            })[];
+        };
+        AddContactsToSequenceOutput: {
+            /** Format: uuid */
+            run_id: string;
+        };
         BuyPhoneNumberInput: {
             /** @description The name of the AI phone agent */
             name?: string;
@@ -336,6 +452,38 @@ export interface components {
                 [key: string]: string;
             };
         };
+        ContactsAffectedBySequenceFilter: {
+            /** @enum {string} */
+            type: "contacts_affected_by_sequence";
+            sequence_id: string;
+        };
+        ContactsCreatedAtFilter: {
+            /** @enum {string} */
+            type: "contacts_created_at_between";
+            /**
+             * DateTime
+             * Format: date-time
+             * @description ISO 8601 date-time string
+             */
+            after: string | null;
+            /**
+             * DateTime
+             * Format: date-time
+             * @description ISO 8601 date-time string
+             */
+            before: string | null;
+        };
+        ContactsEmailDomainNameFilter: {
+            /** @enum {string} */
+            type: "contacts_email_domain_name_in";
+            domain_name_in: string[];
+        };
+        ContactsFilter: components["schemas"]["ContactsIdsFilter"] | components["schemas"]["ContactsCreatedAtFilter"] | components["schemas"]["ContactsEmailDomainNameFilter"] | components["schemas"]["ContactsAffectedBySequenceFilter"];
+        ContactsIdsFilter: {
+            /** @enum {string} */
+            type: "contact_id_in";
+            contact_ids: string[];
+        };
         /** @example {} */
         CreateChatSessionInput: {
             /** Format: uuid */
@@ -356,6 +504,75 @@ export interface components {
              * Format: uuid
              * @description ID of the created session.
              */
+            id: string;
+        };
+        /** @example {
+         *       "steps": [
+         *         {
+         *           "action": {
+         *             "type": "send_emails",
+         *             "data": {
+         *               "from_email": "no-reply@hello.opencopilot.so",
+         *               "email_body": "Hello!",
+         *               "email_sender_name": "OpenCX Team",
+         *               "email_subject": "Welcome to OpenCX!",
+         *               "email_is_transactional": false
+         *             }
+         *           },
+         *           "delay_in_minutes": 2
+         *         }
+         *       ],
+         *       "filter": {
+         *         "or": [
+         *           {
+         *             "and": [
+         *               {
+         *                 "type": "contacts_created_at_between",
+         *                 "before": "2024-09-14T15:34:49.121Z",
+         *                 "after": "2024-09-14T15:34:49.121Z"
+         *               }
+         *             ]
+         *           }
+         *         ]
+         *       }
+         *     } */
+        CreateSequenceInput: {
+            /** @default New Sequence */
+            name: string;
+            custom_id?: string;
+            /** @default true */
+            is_continuous: boolean;
+            /**
+             * ContactsCompositeFilter
+             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included.
+             */
+            filter: {
+                or: {
+                    and: components["schemas"]["ContactsFilter"][];
+                }[];
+            };
+            steps: {
+                action: {
+                    /** @enum {string} */
+                    type: "send_emails";
+                    data: {
+                        /** Format: email */
+                        from_email: string;
+                        email_subject: string;
+                        email_body: string;
+                        email_sender_name: string;
+                        email_is_transactional: boolean;
+                    };
+                } | {
+                    /** @enum {string} */
+                    type: "make_phone_calls";
+                    data: Record<string, never>;
+                };
+                delay_in_minutes?: number;
+            }[];
+        };
+        CreateSequenceOutput: {
+            /** Format: uuid */
             id: string;
         };
         EmailRecipient: {
@@ -401,27 +618,45 @@ export interface components {
                 summary: string;
             };
             /**
-             * Date-Time
+             * DateTime
              * Format: date-time
-             * @description ISO 8601 date-time string.
+             * @description ISO 8601 date-time string
              */
-            created_at: string;
+            created_at: string | null;
             /**
-             * Date-Time
+             * DateTime
              * Format: date-time
-             * @description ISO 8601 date-time string.
+             * @description ISO 8601 date-time string
              */
-            updated_at: string;
+            updated_at: string | null;
+        };
+        GetSequenceOutput: {
+            name: string;
+            custom_id: string | null;
+            /**
+             * ContactsCompositeFilter
+             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included.
+             */
+            filter: {
+                or: {
+                    and: components["schemas"]["ContactsFilter"][];
+                }[];
+            };
+            steps: components["schemas"]["SequenceStep"][];
+            is_continuous: boolean;
+            started_at: string | null;
+            canceled_at: string | null;
+            ended_at: string | null;
         };
         /** @description Paginated response. */
         ListChatHistoryOutput: {
             items: {
                 /**
-                 * Date-Time
+                 * DateTime
                  * Format: date-time
-                 * @description ISO 8601 date-time string.
+                 * @description ISO 8601 date-time string
                  */
-                created_at: string;
+                created_at: string | null;
                 event: {
                     /** @enum {string} */
                     type: "message";
@@ -490,17 +725,17 @@ export interface components {
                     summary: string;
                 };
                 /**
-                 * Date-Time
+                 * DateTime
                  * Format: date-time
-                 * @description ISO 8601 date-time string.
+                 * @description ISO 8601 date-time string
                  */
-                created_at: string;
+                created_at: string | null;
                 /**
-                 * Date-Time
+                 * DateTime
                  * Format: date-time
-                 * @description ISO 8601 date-time string.
+                 * @description ISO 8601 date-time string
                  */
-                updated_at: string;
+                updated_at: string | null;
             }[];
             /** @description The `cursor` for the request to get the next set of items. Null if there is no more data. */
             next: string | null;
@@ -559,7 +794,7 @@ export interface components {
                  * @description ID for a voice provided by 11labs. Different IDs, as well as descriptions of these voices can be found [here](https://elevenlabs.io/docs/voices/default-voices).
                  * @enum {string}
                  */
-                elevenlabs_voice_id: "hP72SDESIJq2YuAblBqz" | "a38v0NaUbsvackET0tSL" | "UR972wNGq3zluze0LoIp" | "IOyj8WtBHdke2FjQgGAr" | "6pVydnYcVtMsrrSeUKs6" | "BafnizVJUkrZF7B8vAMB" | "7ml0LUl80q5HrlC5rH5n" | "2EUn20N7uqcXUxqGrJEF" | "dRqoXefWJMo2lbk72Ucp" | "3R4yOxfnii0AEiNj88t7" | "AcERRlWeeyUhaV8Z6nI7" | "CXlx1qNjAZaq99XYNLZl" | "ktBW0zUVLSxdQiNCm7VY" | "EOYxsIDQfFQEnzbIRe3T" | "4h05pJAlcSqTMs5KRd8X" | "H61ermx0gHYPgQYw03E4" | "fc0bJMlcn2uSFDSWPMjI" | "Yx8RZ6gdw0HEEzcwrVlS" | "4CrZuIW9am7gYAxgo2Af" | "x8udhExu0uJxUn4Tf9Az" | "sY2peC9GbHX8NCy5enOe" | "TxErUhYT25MQSG3MlH4A" | "PoPHDFYHijTq7YiSCwE3" | "tavIIPLplRB883FzWU0V" | "RFMAYURhm3MdnPIzpcwm" | "GiGOaehga8enaTnFQvb4" | "jQWvT5ZpmLknePt8F1jr" | "JjHBC66wF58p4ogebCNA" | "cfO5AAIh6JY3KjKu6QRz" | "IJOA5d06iGvU3ehQdDjg";
+                elevenlabs_voice_id?: "hP72SDESIJq2YuAblBqz" | "a38v0NaUbsvackET0tSL" | "UR972wNGq3zluze0LoIp" | "IOyj8WtBHdke2FjQgGAr" | "6pVydnYcVtMsrrSeUKs6" | "BafnizVJUkrZF7B8vAMB" | "7ml0LUl80q5HrlC5rH5n" | "2EUn20N7uqcXUxqGrJEF" | "dRqoXefWJMo2lbk72Ucp" | "3R4yOxfnii0AEiNj88t7" | "AcERRlWeeyUhaV8Z6nI7" | "CXlx1qNjAZaq99XYNLZl" | "ktBW0zUVLSxdQiNCm7VY" | "EOYxsIDQfFQEnzbIRe3T" | "4h05pJAlcSqTMs5KRd8X" | "H61ermx0gHYPgQYw03E4" | "fc0bJMlcn2uSFDSWPMjI" | "Yx8RZ6gdw0HEEzcwrVlS" | "4CrZuIW9am7gYAxgo2Af" | "x8udhExu0uJxUn4Tf9Az" | "sY2peC9GbHX8NCy5enOe" | "TxErUhYT25MQSG3MlH4A" | "PoPHDFYHijTq7YiSCwE3" | "tavIIPLplRB883FzWU0V" | "RFMAYURhm3MdnPIzpcwm" | "GiGOaehga8enaTnFQvb4" | "jQWvT5ZpmLknePt8F1jr" | "JjHBC66wF58p4ogebCNA" | "cfO5AAIh6JY3KjKu6QRz" | "IJOA5d06iGvU3ehQdDjg";
                 /** @description The speed of the voice in which the AI agent speaks in. */
                 voice_speed?: number;
                 /**
@@ -624,6 +859,27 @@ export interface components {
                 };
             };
         };
+        SequenceStep: {
+            action: {
+                /** @enum {string} */
+                type: "send_emails";
+                data: {
+                    /** Format: email */
+                    from_email: string;
+                    email_subject: string;
+                    email_body: string;
+                    email_sender_name: string;
+                    email_is_transactional: boolean;
+                };
+            } | {
+                /** @enum {string} */
+                type: "make_phone_calls";
+                data: Record<string, never>;
+            };
+            delay_in_minutes?: number;
+            started_at?: string;
+            ended_at?: string;
+        };
         UpdateChatSessionInput: {
             /** @enum {string} */
             status?: "open" | "closed_resolved" | "closed_unresolved";
@@ -676,6 +932,44 @@ export interface components {
             awaiting_response_max_spoken_count?: number;
             /** @description This is the timeout in seconds before a message from idleMessages is spoken. The clock starts when the assistant finishes speaking and remains active until the user speaks. */
             awaiting_response_timeout?: number;
+        };
+        /** @example {
+         *       "name": "New name"
+         *     } */
+        UpdateSequenceInput: {
+            /** @default New Sequence */
+            name: string;
+            custom_id?: string;
+            /** @default true */
+            is_continuous: boolean;
+            /**
+             * ContactsCompositeFilter
+             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included.
+             */
+            filter?: {
+                or: {
+                    and: components["schemas"]["ContactsFilter"][];
+                }[];
+            };
+            steps?: {
+                action: {
+                    /** @enum {string} */
+                    type: "send_emails";
+                    data: {
+                        /** Format: email */
+                        from_email: string;
+                        email_subject: string;
+                        email_body: string;
+                        email_sender_name: string;
+                        email_is_transactional: boolean;
+                    };
+                } | {
+                    /** @enum {string} */
+                    type: "make_phone_calls";
+                    data: Record<string, never>;
+                };
+                delay_in_minutes?: number;
+            }[];
         };
         ErrorDto: {
             statusCode?: number;
@@ -1238,6 +1532,195 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ListChatHistoryOutput"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    createSequence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSequenceInput"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateSequenceOutput"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getSequence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID or _custom ID_ for the sequence */
+                sequence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetSequenceOutput"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    updateSequence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID or _custom ID_ for the sequence */
+                sequence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSequenceInput"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    startSequence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID or _custom ID_ for the sequence */
+                sequence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    cancelSequence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID or _custom ID_ for the sequence. This can also be a _run ID_. */
+                sequence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    addContactsToSequence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID or _custom ID_ for the sequence. */
+                sequence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddContactsToSequenceInput"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddContactsToSequenceOutput"];
                 };
             };
             /** @description Internal Server Error */
