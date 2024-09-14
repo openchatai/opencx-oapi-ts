@@ -522,6 +522,11 @@ export interface components {
             /** @description The `cursor` for the request to get the next set of items. Null if there is no more data. */
             next: string | null;
         };
+        /** @example {
+         *       "contact": {
+         *         "phone_number": "+12345678910"
+         *       }
+         *     } */
         MakeOutboundPhoneCallInput: {
             contact: {
                 /** Format: uuid */
@@ -582,7 +587,7 @@ export interface components {
              * Format: uuid
              * @description The ID of the created contact.
              */
-            id: string;
+            id?: string;
         };
         SendEmailInput: {
             /**
