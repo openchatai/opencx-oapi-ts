@@ -15,15 +15,8 @@ export interface paths {
         /**
          * Import from OpenAPI file
          * @description
-         *     This endpoint supports the [OpenAPI V3 Specification](https://swagger.io/specification/) (previously known as Swagger). We have introduced some new fields to the OpenAPI specification that are custom to Open. These fields are:
-         *
-         *     - `x-open-execute-after: string[]`
-         *       This field is useful when you want to execute other operation(s) before the current operation/action. it takes an array of operation IDs. The AI will execute the operations in the order they are listed in the array.
-         *
-         *       ### Example
-         *       Suppose you have an action with the operation ID `deleteUserCourses`. Before performing this action, you want to force the AI to list all the courses the user has and then delete them.
-         *
-         *       You can achieve this by adding `['listUserCourses']` to the `x-open-execute-after` field. The AI will first execute the `listUserCourses` operation and then proceed to execute the `deleteUserCourses` operation.
+         *     Upload your OpenAPI (previously known as Swagger) specification.
+         *     Versions 2, 3, and 3.1 are supported. Both YAML and JSON formats are supported.
          *
          */
         put: operations["importActionsFromOpenAapiSpec"];
@@ -102,28 +95,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/phone/buy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Create AI phone number
-         * @description
-         *       Buy an AI phone number. This phone number can be used to receive and make phone calls that are connected to the AI agent. For now, this API only supports US phone numbers. Email mo@open.cx for other countries.
-         *
-         */
-        post: operations["buyPhoneNumber"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/phone": {
         parameters: {
             query?: never;
@@ -131,17 +102,23 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List phone numbers */
+        /** List AI phone agents */
         get: operations["listPhoneNumbers"];
         put?: never;
-        post?: never;
+        /**
+         * Create an AI phone agent
+         * @description
+         *       Create an AI phone agent. This phone number can be used to receive and make phone calls. For now, this API only supports US phone numbers. Email mo@open.cx for other countries.
+         *
+         */
+        post: operations["createPhoneAgent"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/phone/{phone_number_id}": {
+    "/phone/{phone_agent_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -151,29 +128,12 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Delete a phone number */
+        /** Delete an AI phone agent */
         delete: operations["deletePhoneNumber"];
         options?: never;
         head?: never;
-        /** Update a phone number */
-        patch: operations["updatePhoneNumber"];
-        trace?: never;
-    };
-    "/phone/{phone_number_id}/call": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Make an AI phone call */
-        post: operations["makeOutboundPhoneCall"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
+        /** Update an AI phone agent */
+        patch: operations["updatePhoneAgent"];
         trace?: never;
     };
     "/chat/sessions": {
@@ -289,14 +249,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /**
-         * Start a oneoff sequence
-         * @description
-         *     Start a oneoff sequence.
-         *     - The sequence must have the `is_continuous` property set to `false`
-         *     - The sequence must not have been previously canceled
-         *
-         */
+        /** Start a sequence */
         put: operations["startSequence"];
         post?: never;
         delete?: never;
@@ -347,6 +300,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/widget/authenticate-user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description authenticate the contacts */
+        post: operations["authenticateWidgetUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -366,61 +336,37 @@ export interface components {
             /** Format: uuid */
             run_id: string;
         };
-        BuyPhoneNumberInput: {
-            /** @description The name of the AI phone agent */
+        AuthenticateUserPayloadDto: {
+            /**
+             * Format: email
+             * @description The email of the user to authenticate
+             * @example jhon@example.com
+             */
+            email: string;
+            /**
+             * @description The name of the user to authenticate
+             * @example John Doe
+             */
             name?: string;
-            /** @description The area code of the phone number. For now, this API only supports US phone numbers, so the area code should be a 3-digit number. */
-            area_code: string;
-            /** @description
-             *     The base prompt guides the AI's responses when interacting with customers. It
-             *     serves as the foundational instruction set for the AI, defining how it
-             *     should initiate conversations, handle customer inquiries, and respond to
-             *     various scenarios. This prompt helps ensure that the AI provides consistent
-             *     and relevant responses tailored to the specific needs of the organization and
-             *     its customers.
-             *      */
-            base_prompt?: string;
-            /** @description The phone number of the human agent to hand off the call to */
-            handoff_phone_number?: string;
-            /** @description The initial message to be spoken by the AI phone agent when it answers the phone call (e.g - "Hello! This is Mark from FictionalCompany. How can I help you?") */
-            greeting_message?: string;
             /**
-             * @description The language the AI phone agent speaks in
-             * @default en
-             * @enum {string}
+             * @description The URL of the user's avatar
+             * @example https://example.com/avatar.png
              */
-            language: "bg" | "ca" | "zh" | "zh-TW" | "cs" | "da" | "nl" | "en" | "et" | "fi" | "nl-BE" | "fr" | "de" | "de-CH" | "el" | "hi" | "hu" | "id" | "it" | "ja" | "ko" | "lv" | "lt" | "ms" | "multi" | "no" | "pl" | "pt" | "ro" | "ru" | "sk" | "es" | "sv" | "th" | "tr" | "uk" | "vi";
-            /** @description Whether the AI should recognize emotions of the user on the other end of the call. If turned off, the agent will not recognize the different emotions of the user from their tone, like anger, disappointment, etc. */
-            emotion_recognition?: boolean;
+            avatar_url?: string | null;
             /**
-             * @description ID for a voice provided by 11labs. Different IDs, as well as descriptions of these voices can be found [here](https://elevenlabs.io/docs/voices/default-voices).
-             * @enum {string}
+             * @description contact's phone number including the conutry code
+             * @example +1234567890
              */
-            elevenlabs_voice_id: "hP72SDESIJq2YuAblBqz" | "a38v0NaUbsvackET0tSL" | "UR972wNGq3zluze0LoIp" | "IOyj8WtBHdke2FjQgGAr" | "6pVydnYcVtMsrrSeUKs6" | "BafnizVJUkrZF7B8vAMB" | "7ml0LUl80q5HrlC5rH5n" | "2EUn20N7uqcXUxqGrJEF" | "dRqoXefWJMo2lbk72Ucp" | "3R4yOxfnii0AEiNj88t7" | "AcERRlWeeyUhaV8Z6nI7" | "CXlx1qNjAZaq99XYNLZl" | "ktBW0zUVLSxdQiNCm7VY" | "EOYxsIDQfFQEnzbIRe3T" | "4h05pJAlcSqTMs5KRd8X" | "H61ermx0gHYPgQYw03E4" | "fc0bJMlcn2uSFDSWPMjI" | "Yx8RZ6gdw0HEEzcwrVlS" | "4CrZuIW9am7gYAxgo2Af" | "x8udhExu0uJxUn4Tf9Az" | "sY2peC9GbHX8NCy5enOe" | "TxErUhYT25MQSG3MlH4A" | "PoPHDFYHijTq7YiSCwE3" | "tavIIPLplRB883FzWU0V" | "RFMAYURhm3MdnPIzpcwm" | "GiGOaehga8enaTnFQvb4" | "jQWvT5ZpmLknePt8F1jr" | "JjHBC66wF58p4ogebCNA" | "cfO5AAIh6JY3KjKu6QRz" | "IJOA5d06iGvU3ehQdDjg";
-            /** @description The speed of the voice in which the AI agent speaks. */
-            voice_speed?: number;
+            phone?: string;
             /**
-             * @description Specifies who speaks first in the phone call, the AI phone assistant, or, the user calling
-             * @enum {string}
+             * @description Custom data
+             * @example {
+             *       "customKey": "customValue"
+             *     }
              */
-            speaks_first?: "assistant-speaks-first" | "user-speaks-first";
-            /** @description The time the AI agent waits without speech from either the AI agent or the user before ending the call */
-            wait_time_before_ending_call?: number;
-            /** @description The maximum number of seconds that the call will last. When the call reaches this duration, it will end. */
-            call_max_duration?: number;
-            /** @description This is the message that the assistant will say if it ends the call. If unspecified, it will hang up without saying anything. */
-            end_call_message?: string;
-            /** @description A set of messages to be said whenever there is no speach for a certain amount of time specified in `idle_timeout_seconds`, when this time is exceeded the AI agent says one of the messages specified. The different messages are seperated using commas. (e.g - "Are you still there?,Hello?,Do you need help with anything?") */
-            awaiting_response_messages?: string;
-            /** @description This determines the maximum number of times `awaiting_response_messages` can be spoken during the call. */
-            awaiting_response_max_spoken_count?: number;
-            /** @description The timeout in seconds before a message from `idleMessages` is spoken. The clock starts when the assistant finishes speaking and remains active until the user speaks. */
-            awaiting_response_timeout?: number;
-        };
-        BuyPhoneNumberOutput: {
-            /** Format: uuid */
-            id: string;
-            phone_number: string;
+            customData?: {
+                [key: string]: string | number | boolean;
+            };
         };
         ChatMessageSender: {
             /** @enum {string} */
@@ -465,13 +411,13 @@ export interface components {
              * Format: date-time
              * @description ISO 8601 date-time string
              */
-            after: string | null;
+            after?: string | null;
             /**
              * DateTime
              * Format: date-time
              * @description ISO 8601 date-time string
              */
-            before: string | null;
+            before?: string | null;
         };
         ContactsEmailDomainNameFilter: {
             /** @enum {string} */
@@ -496,7 +442,7 @@ export interface components {
                  * ChatSessionChannelType
                  * @enum {string}
                  */
-                type: "web" | "web_voice" | "phone_voice" | "email" | "sms" | "whatsapp" | "api";
+                type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "api" | "web_voice";
             };
         };
         CreateChatSessionOutput: {
@@ -505,6 +451,62 @@ export interface components {
              * @description ID of the created session.
              */
             id: string;
+        };
+        CreatePhoneAgentDto: {
+            /** @description The name of the AI phone agent */
+            name: string;
+            /**
+             * @default inbound
+             * @enum {string}
+             */
+            type: "inbound" | "outbound";
+            /** @description The language the AI phone agent should mainly speak in */
+            language?: string | null;
+            /** @description The accent the AI phone agent should mainly speak in */
+            accent?: string | null;
+            /** @description The phone number of the human agent to hand off the call to */
+            handoff_phone_number?: string | null;
+            /**
+             * @description Whether the agent can be interrupted or not
+             * @default true
+             */
+            interruptible: boolean;
+            /** @description A list of action ids the AI phone agent has access to. A `null` value means all actions. An empty list means no actions */
+            actionIds?: string[] | null;
+            /** @description A list of instructions */
+            instructions?: string[] | null;
+            /** @description A list of fields to collect data about */
+            data_collection_fields?: string[] | null;
+            /** @description The webhook url to send the collected data to */
+            data_collection_webhook_url?: string | null;
+            /**
+             * @description The AI model of the agent. This cannot be changed after creation
+             * @default oppie-vox
+             * @enum {string}
+             */
+            model: "oppie-vox" | "oppie-vox-turbo" | "oppie-vox-2";
+            /** @description The first message the AI phone agent should say */
+            first_message?: string | null;
+            /** @description The voice id */
+            voice_id?: string | null;
+            flow: {
+                /** @enum {string} */
+                type: "root" | "condition" | "action";
+                content: string;
+                children: {
+                    /** @enum {string} */
+                    type: "root" | "condition" | "action";
+                    content: string;
+                    children: {
+                        /** @enum {string} */
+                        type: "root" | "condition" | "action";
+                        content: string;
+                        children: unknown[];
+                    }[];
+                }[];
+            } | null;
+            /** @description Whether the AI phone agent should use the organization's knowledgebase */
+            use_org_knowledgebase?: boolean | null;
         };
         /** @example {
          *       "steps": [
@@ -528,8 +530,8 @@ export interface components {
          *             "and": [
          *               {
          *                 "type": "contacts_created_at_between",
-         *                 "before": "2024-09-14T15:34:49.121Z",
-         *                 "after": "2024-09-14T15:34:49.121Z"
+         *                 "before": "2025-02-05T09:47:27.411Z",
+         *                 "after": "2025-02-05T09:47:27.411Z"
          *               }
          *             ]
          *           }
@@ -544,19 +546,18 @@ export interface components {
             is_continuous: boolean;
             /**
              * ContactsCompositeFilter
-             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included.
+             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included. If no filter is provided, all contacts will be included.
              */
             filter: {
                 or: {
                     and: components["schemas"]["ContactsFilter"][];
                 }[];
-            };
+            } | null;
             steps: {
                 action: {
                     /** @enum {string} */
                     type: "send_emails";
                     data: {
-                        /** Format: email */
                         from_email: string;
                         email_subject: string;
                         email_body: string;
@@ -566,7 +567,15 @@ export interface components {
                 } | {
                     /** @enum {string} */
                     type: "make_phone_calls";
-                    data: Record<string, never>;
+                    data: {
+                        aiPhoneAgentId: string;
+                    };
+                } | {
+                    /** @enum {string} */
+                    type: "send_sms_messages";
+                    data: {
+                        message: string;
+                    };
                 };
                 delay_in_minutes?: number;
             }[];
@@ -592,6 +601,16 @@ export interface components {
             /** Format: binary */
             file: string;
         };
+        GenericResponseDto: {
+            data?: {
+                success: boolean;
+            };
+            error?: {
+                code: string;
+                status: number;
+                message: string;
+            };
+        };
         /** ChatSession */
         GetChatSessionOutput: {
             /** Format: uuid */
@@ -603,7 +622,7 @@ export interface components {
                  * ChatSessionChannelType
                  * @enum {string}
                  */
-                type: "web" | "web_voice" | "phone_voice" | "email" | "sms" | "whatsapp" | "api";
+                type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "api" | "web_voice";
             };
             contact?: components["schemas"]["Contact"];
             language?: string;
@@ -631,22 +650,25 @@ export interface components {
             updated_at: string | null;
         };
         GetSequenceOutput: {
+            id: string;
             name: string;
+            org_id: string;
             custom_id: string | null;
             /**
              * ContactsCompositeFilter
-             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included.
+             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included. If no filter is provided, all contacts will be included.
              */
             filter: {
                 or: {
                     and: components["schemas"]["ContactsFilter"][];
                 }[];
-            };
+            } | null;
             steps: components["schemas"]["SequenceStep"][];
             is_continuous: boolean;
             started_at: string | null;
             canceled_at: string | null;
             ended_at: string | null;
+            status: components["schemas"]["SequenceStatus"];
         };
         /** @description Paginated response. */
         ListChatHistoryOutput: {
@@ -710,7 +732,7 @@ export interface components {
                      * ChatSessionChannelType
                      * @enum {string}
                      */
-                    type: "web" | "web_voice" | "phone_voice" | "email" | "sms" | "whatsapp" | "api";
+                    type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "api" | "web_voice";
                 };
                 contact?: components["schemas"]["Contact"];
                 language?: string;
@@ -752,67 +774,50 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 name: string | null;
-                phone_number: string;
+                phone_number: string | null;
             }[];
             /** @description The `cursor` for the request to get the next set of items. Null if there is no more data. */
             next: string | null;
         };
-        /** @example {
-         *       "contact": {
-         *         "phone_number": "+12345678910"
-         *       }
-         *     } */
-        MakeOutboundPhoneCallInput: {
-            contact: {
-                /** Format: uuid */
-                id: string;
-            } | {
-                phone_number: string;
-            };
-            options?: {
-                /** @description
-                 *     The base prompt guides the AI's responses when interacting with customers. It
-                 *     serves as the foundational instruction set for the AI, defining how it
-                 *     should initiate conversations, handle customer inquiries, and respond to
-                 *     various scenarios. This prompt helps ensure that the AI provides consistent
-                 *     and relevant responses tailored to the specific needs of the organization and
-                 *     its customers.
-                 *      */
-                base_prompt?: string;
-                /** @description The phone number of the human agent to hand off the call to */
-                handoff_phone_number?: string;
-                /** @description The initial message to be spoken by the AI phone agent when it answers the phone call (e.g - "Hello! This is Mark from FictionalCompany. How can I help you?") */
-                initial_message?: string;
-                /**
-                 * @description The language the AI phone agent speaks in
-                 * @enum {string}
-                 */
-                language?: "bg" | "ca" | "zh" | "zh-TW" | "cs" | "da" | "nl" | "en" | "et" | "fi" | "nl-BE" | "fr" | "de" | "de-CH" | "el" | "hi" | "hu" | "id" | "it" | "ja" | "ko" | "lv" | "lt" | "ms" | "multi" | "no" | "pl" | "pt" | "ro" | "ru" | "sk" | "es" | "sv" | "th" | "tr" | "uk" | "vi";
-                /** @description Whether the AI should recognize emotions of the user on the other end of the call, if turned off, the agent will not recognize the different emotions of the user from their tone, like anger, disappointment, etc.. */
-                emotion_recognition?: boolean;
-                /**
-                 * @description ID for a voice provided by 11labs. Different IDs, as well as descriptions of these voices can be found [here](https://elevenlabs.io/docs/voices/default-voices).
-                 * @enum {string}
-                 */
-                elevenlabs_voice_id?: "hP72SDESIJq2YuAblBqz" | "a38v0NaUbsvackET0tSL" | "UR972wNGq3zluze0LoIp" | "IOyj8WtBHdke2FjQgGAr" | "6pVydnYcVtMsrrSeUKs6" | "BafnizVJUkrZF7B8vAMB" | "7ml0LUl80q5HrlC5rH5n" | "2EUn20N7uqcXUxqGrJEF" | "dRqoXefWJMo2lbk72Ucp" | "3R4yOxfnii0AEiNj88t7" | "AcERRlWeeyUhaV8Z6nI7" | "CXlx1qNjAZaq99XYNLZl" | "ktBW0zUVLSxdQiNCm7VY" | "EOYxsIDQfFQEnzbIRe3T" | "4h05pJAlcSqTMs5KRd8X" | "H61ermx0gHYPgQYw03E4" | "fc0bJMlcn2uSFDSWPMjI" | "Yx8RZ6gdw0HEEzcwrVlS" | "4CrZuIW9am7gYAxgo2Af" | "x8udhExu0uJxUn4Tf9Az" | "sY2peC9GbHX8NCy5enOe" | "TxErUhYT25MQSG3MlH4A" | "PoPHDFYHijTq7YiSCwE3" | "tavIIPLplRB883FzWU0V" | "RFMAYURhm3MdnPIzpcwm" | "GiGOaehga8enaTnFQvb4" | "jQWvT5ZpmLknePt8F1jr" | "JjHBC66wF58p4ogebCNA" | "cfO5AAIh6JY3KjKu6QRz" | "IJOA5d06iGvU3ehQdDjg";
-                /** @description The speed of the voice in which the AI agent speaks in. */
-                voice_speed?: number;
-                /**
-                 * @description Specifies who speaks first in the phone call, the AI phone assistant, or, the user calling
-                 * @enum {string}
-                 */
-                speaks_first?: "assistant-speaks-first" | "user-speaks-first";
-                /** @description The time the AI agent waits without speech from either the AI agent or the user, before ending the call */
-                wait_time_before_ending_call?: number;
-                /** @description This is the maximum number of seconds that the call will last. When the call reaches this duration, it will end. */
-                call_max_duration?: number;
-                /** @description A set of messages to be said whenever there is no speach for a certain amount of time specified in "awaiting_response_timeout", when this time is exceeded the AI agent says one of the messages specified. The different messages are seperated using commas. (e.g - "Are you still there?,Hello?,Do you need help with anything?") */
-                awaiting_response_messages?: string;
-                /** @description This determines the maximum number of times awaiting_response_messages can be spoken during the call. */
-                awaiting_response_max_spoken_count?: number;
-                /** @description This is the timeout in seconds before a message from idleMessages is spoken. The clock starts when the assistant finishes speaking and remains active until the user speaks. */
-                awaiting_response_timeout?: number;
-            };
+        PhoneAgentDto: {
+            id: string;
+            org_id: string;
+            phone_number: string | null;
+            name: string | null;
+            /** @enum {string} */
+            type: "inbound" | "outbound";
+            language: string | null;
+            accent: string | null;
+            handoff_phone_number: string | null;
+            interruptible: boolean;
+            actionIds: string[] | null;
+            instructions: string[] | null;
+            data_collection_fields: string[] | null;
+            data_collection_webhook_url: string | null;
+            /** @enum {string} */
+            model: "oppie-vox" | "oppie-vox-turbo" | "oppie-vox-2";
+            voice_id: string | null;
+            first_message: string | null;
+            created_at: string;
+            updated_at: string;
+            provider_external_id: string | null;
+            flow: {
+                /** @enum {string} */
+                type: "root" | "condition" | "action";
+                content: string;
+                children: {
+                    /** @enum {string} */
+                    type: "root" | "condition" | "action";
+                    content: string;
+                    children: {
+                        /** @enum {string} */
+                        type: "root" | "condition" | "action";
+                        content: string;
+                        children: unknown[];
+                    }[];
+                }[];
+            } | null;
+            use_org_knowledgebase: boolean;
         };
         SaveContactInput: {
             contact: components["schemas"]["ContactInput"];
@@ -842,29 +847,82 @@ export interface components {
             /** @description Fallback body of the email in HTML format. */
             fallback_email_body?: string;
         };
+        /** @example {
+         *       "sender": "contact",
+         *       "message": {
+         *         "type": "text",
+         *         "text": "Hello!"
+         *       }
+         *     } */
         SendMessageInput: {
             /** @enum {string} */
             sender: "contact";
+            /** @description Updated contact info */
+            contact?: {
+                name?: string;
+                /** Format: email */
+                email?: string;
+                phone_number?: string;
+                avatar_url?: string;
+                custom_data?: {
+                    [key: string]: string;
+                };
+            };
             message: {
                 /** @enum {string} */
                 type: "text";
                 text: string;
+                attachments?: {
+                    id: string;
+                    name: string;
+                    size: number;
+                    type: string;
+                    url: string;
+                }[];
             };
         };
         SendMessageOutput: {
-            ai_response?: {
-                text: string;
-                error?: {
-                    message: string;
+            /** @enum {boolean} */
+            success: true;
+            code?: string | "session_assigned_to_human_agent";
+            autopilotResponse?: {
+                /** @enum {string} */
+                type: "text";
+                value: {
+                    error: boolean;
+                    content: string;
                 };
+                id?: string;
+                mightSolveUserIssue: boolean;
+            };
+            uiResponse?: {
+                /** @enum {string} */
+                type: "ui";
+                value: {
+                    /** @enum {string} */
+                    type: "ui_component";
+                    request_response?: unknown;
+                    name: string;
+                    content?: string;
+                };
+                mightSolveUserIssue: boolean;
+            };
+            sessionIsHandedOff?: boolean;
+        } | {
+            /** @enum {boolean} */
+            success: false;
+            error: {
+                code?: string;
+                message?: string;
             };
         };
+        /** @enum {string|null} */
+        SequenceStatus: "pending" | "complete" | "canceled" | "active" | null;
         SequenceStep: {
             action: {
                 /** @enum {string} */
                 type: "send_emails";
                 data: {
-                    /** Format: email */
                     from_email: string;
                     email_subject: string;
                     email_body: string;
@@ -874,11 +932,30 @@ export interface components {
             } | {
                 /** @enum {string} */
                 type: "make_phone_calls";
-                data: Record<string, never>;
+                data: {
+                    aiPhoneAgentId: string;
+                };
+            } | {
+                /** @enum {string} */
+                type: "send_sms_messages";
+                data: {
+                    message: string;
+                };
             };
             delay_in_minutes?: number;
             started_at?: string;
             ended_at?: string;
+        };
+        StartOneOffSequenceOutputDto: {
+            data?: {
+                success: boolean;
+            };
+            error?: {
+                /** @enum {string} */
+                code: "sequence_not_found" | "one_off_sequence_is_canceled" | "sequence_already_started";
+                status: 400 | 404;
+                message: string;
+            };
         };
         UpdateChatSessionInput: {
             /** @enum {string} */
@@ -887,51 +964,48 @@ export interface components {
         UpdateContactInput: {
             contact: components["schemas"]["ContactInput"];
         };
-        UpdatePhoneNumberInput: {
-            /** @description The name of the AI phone agent */
+        UpdatePhoneAgentDto: {
             name?: string;
-            /** @description
-             *     The base prompt guides the AI's responses when interacting with customers. It
-             *     serves as the foundational instruction set for the AI, defining how it
-             *     should initiate conversations, handle customer inquiries, and respond to
-             *     various scenarios. This prompt helps ensure that the AI provides consistent
-             *     and relevant responses tailored to the specific needs of the organization and
-             *     its customers.
-             *      */
-            base_prompt?: string;
+            /** @enum {string} */
+            type?: "inbound" | "outbound";
+            /** @description The language the AI phone agent should mainly speak in */
+            language?: string | null;
+            /** @description The accent the AI phone agent should mainly speak in */
+            accent?: string | null;
             /** @description The phone number of the human agent to hand off the call to */
-            handoff_phone_number?: string;
-            /** @description The initial message to be spoken by the AI phone agent when it answers the phone call (e.g - "Hello! This is Mark from FictionalCompany. How can I help you?") */
-            initial_message?: string;
-            /**
-             * @description The language the AI phone agent speaks in
-             * @enum {string}
-             */
-            language?: "bg" | "ca" | "zh" | "zh-TW" | "cs" | "da" | "nl" | "en" | "et" | "fi" | "nl-BE" | "fr" | "de" | "de-CH" | "el" | "hi" | "hu" | "id" | "it" | "ja" | "ko" | "lv" | "lt" | "ms" | "multi" | "no" | "pl" | "pt" | "ro" | "ru" | "sk" | "es" | "sv" | "th" | "tr" | "uk" | "vi";
-            /** @description Whether the AI should recognize emotions of the user on the other end of the call, if turned off, the agent will not recognize the different emotions of the user from their tone, like anger, disappointment, etc.. */
-            emotion_recognition?: boolean;
-            /**
-             * @description ID for a voice provided by 11labs. Different IDs, as well as descriptions of these voices can be found [here](https://elevenlabs.io/docs/voices/default-voices).
-             * @enum {string}
-             */
-            elevenlabs_voice_id: "hP72SDESIJq2YuAblBqz" | "a38v0NaUbsvackET0tSL" | "UR972wNGq3zluze0LoIp" | "IOyj8WtBHdke2FjQgGAr" | "6pVydnYcVtMsrrSeUKs6" | "BafnizVJUkrZF7B8vAMB" | "7ml0LUl80q5HrlC5rH5n" | "2EUn20N7uqcXUxqGrJEF" | "dRqoXefWJMo2lbk72Ucp" | "3R4yOxfnii0AEiNj88t7" | "AcERRlWeeyUhaV8Z6nI7" | "CXlx1qNjAZaq99XYNLZl" | "ktBW0zUVLSxdQiNCm7VY" | "EOYxsIDQfFQEnzbIRe3T" | "4h05pJAlcSqTMs5KRd8X" | "H61ermx0gHYPgQYw03E4" | "fc0bJMlcn2uSFDSWPMjI" | "Yx8RZ6gdw0HEEzcwrVlS" | "4CrZuIW9am7gYAxgo2Af" | "x8udhExu0uJxUn4Tf9Az" | "sY2peC9GbHX8NCy5enOe" | "TxErUhYT25MQSG3MlH4A" | "PoPHDFYHijTq7YiSCwE3" | "tavIIPLplRB883FzWU0V" | "RFMAYURhm3MdnPIzpcwm" | "GiGOaehga8enaTnFQvb4" | "jQWvT5ZpmLknePt8F1jr" | "JjHBC66wF58p4ogebCNA" | "cfO5AAIh6JY3KjKu6QRz" | "IJOA5d06iGvU3ehQdDjg";
-            /** @description The speed of the voice in which the AI agent speaks in. */
-            voice_speed?: number;
-            /**
-             * @description Specifies who speaks first in the phone call, the AI phone assistant, or, the user calling
-             * @enum {string}
-             */
-            speaks_first?: "assistant-speaks-first" | "user-speaks-first";
-            /** @description The time the AI agent waits without speech from either the AI agent or the user, before ending the call */
-            wait_time_before_ending_call?: number;
-            /** @description This is the maximum number of seconds that the call will last. When the call reaches this duration, it will end. */
-            call_max_duration?: number;
-            /** @description A set of messages to be said whenever there is no speach for a certain amount of time specified in "awaiting_response_timeout", when this time is exceeded the AI agent says one of the messages specified. The different messages are seperated using commas. (e.g - "Are you still there?,Hello?,Do you need help with anything?") */
-            awaiting_response_messages?: string;
-            /** @description This determines the maximum number of times awaiting_response_messages can be spoken during the call. */
-            awaiting_response_max_spoken_count?: number;
-            /** @description This is the timeout in seconds before a message from idleMessages is spoken. The clock starts when the assistant finishes speaking and remains active until the user speaks. */
-            awaiting_response_timeout?: number;
+            handoff_phone_number?: string | null;
+            /** @description Whether the agent can be interrupted or not */
+            interruptible?: boolean;
+            /** @description A list of action ids the AI phone agent has access to. A `null` value means all actions. An empty list means no actions */
+            actionIds?: string[] | null;
+            /** @description A list of instructions */
+            instructions?: string[] | null;
+            /** @description A list of fields to collect data about */
+            data_collection_fields?: string[] | null;
+            /** @description The webhook url to send the collected data to */
+            data_collection_webhook_url?: string | null;
+            /** @description The voice id */
+            voice_id?: string | null;
+            /** @description The first message the AI phone agent should say */
+            first_message?: string | null;
+            flow: {
+                /** @enum {string} */
+                type: "root" | "condition" | "action";
+                content: string;
+                children: {
+                    /** @enum {string} */
+                    type: "root" | "condition" | "action";
+                    content: string;
+                    children: {
+                        /** @enum {string} */
+                        type: "root" | "condition" | "action";
+                        content: string;
+                        children: unknown[];
+                    }[];
+                }[];
+            } | null;
+            /** @description Whether the AI phone agent should use the organization's knowledgebase (enabling it will increase the latency of the agent) */
+            use_org_knowledgebase?: boolean | null;
         };
         /** @example {
          *       "name": "New name"
@@ -944,19 +1018,18 @@ export interface components {
             is_continuous: boolean;
             /**
              * ContactsCompositeFilter
-             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included.
+             * @description A combination of contact filters. All filters within `and` arrays must apply to a contact in order for the contact to be included. On the other hand, only one of the filters within the `or` array must apply for the contact to be included. If no filter is provided, all contacts will be included.
              */
             filter?: {
                 or: {
                     and: components["schemas"]["ContactsFilter"][];
                 }[];
-            };
+            } | null;
             steps?: {
                 action: {
                     /** @enum {string} */
                     type: "send_emails";
                     data: {
-                        /** Format: email */
                         from_email: string;
                         email_subject: string;
                         email_body: string;
@@ -966,10 +1039,22 @@ export interface components {
                 } | {
                     /** @enum {string} */
                     type: "make_phone_calls";
-                    data: Record<string, never>;
+                    data: {
+                        aiPhoneAgentId: string;
+                    };
+                } | {
+                    /** @enum {string} */
+                    type: "send_sms_messages";
+                    data: {
+                        message: string;
+                    };
                 };
                 delay_in_minutes?: number;
             }[];
+        };
+        WidgetContactTokenResponseDto: {
+            /** @description The JWT token to use for further requests */
+            token: string;
         };
         ErrorDto: {
             statusCode?: number;
@@ -992,7 +1077,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        /** @description The OpenAPI (Swagger) file to import actions from. Must be in JSON format. */
+        /** @description The OpenAPI (Swagger) file to import actions from. */
         requestBody: {
             content: {
                 "multipart/form-data": components["schemas"]["FileUploadDto"];
@@ -1195,38 +1280,6 @@ export interface operations {
             };
         };
     };
-    buyPhoneNumber: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BuyPhoneNumberInput"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BuyPhoneNumberOutput"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorDto"];
-                };
-            };
-        };
-    };
     listPhoneNumbers: {
         parameters: {
             query?: {
@@ -1258,12 +1311,44 @@ export interface operations {
             };
         };
     };
+    createPhoneAgent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePhoneAgentDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhoneAgentDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
     deletePhoneNumber: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                phone_number_id: string;
+                phone_agent_id: string;
             };
             cookie?: never;
         };
@@ -1286,18 +1371,18 @@ export interface operations {
             };
         };
     };
-    updatePhoneNumber: {
+    updatePhoneAgent: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                phone_number_id: string;
+                phone_agent_id: string;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdatePhoneNumberInput"];
+                "application/json": components["schemas"]["UpdatePhoneAgentDto"];
             };
         };
         responses: {
@@ -1318,43 +1403,11 @@ export interface operations {
             };
         };
     };
-    makeOutboundPhoneCall: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                phone_number_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MakeOutboundPhoneCallInput"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorDto"];
-                };
-            };
-        };
-    };
     listChatSessions: {
         parameters: {
             query?: {
                 handed_off?: boolean;
-                channel_type?: "web" | "web_voice" | "phone_voice" | "email" | "sms" | "whatsapp" | "api";
+                channel_type?: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "api" | "web_voice";
                 status?: "open" | "closed_resolved" | "closed_unresolved";
                 /** @description Pagination cursor to fetch the next set of results */
                 cursor?: string;
@@ -1657,7 +1710,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["StartOneOffSequenceOutputDto"];
+                };
             };
             /** @description Internal Server Error */
             500: {
@@ -1675,7 +1730,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description ID or _custom ID_ for the sequence. This can also be a _run ID_. */
+                /** @description The sequence `id`. This can also be a run `id`. */
                 sequence_id: string;
             };
             cookie?: never;
@@ -1686,7 +1741,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["GenericResponseDto"];
+                };
             };
             /** @description Internal Server Error */
             500: {
@@ -1721,6 +1778,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AddContactsToSequenceOutput"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    authenticateWidgetUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuthenticateUserPayloadDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WidgetContactTokenResponseDto"];
                 };
             };
             /** @description Internal Server Error */
