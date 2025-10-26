@@ -14,10 +14,8 @@ export interface paths {
         get?: never;
         /**
          * Import from OpenAPI file
-         * @description
-         *     Upload your OpenAPI (previously known as Swagger) specification.
+         * @description Upload your OpenAPI (previously known as Swagger) specification.
          *     Versions 2, 3, and 3.1 are supported. Both YAML and JSON formats are supported.
-         *
          */
         put: operations["importActionsFromOpenAapiSpec"];
         post?: never;
@@ -81,15 +79,77 @@ export interface paths {
         put?: never;
         /**
          * Send emails
-         * @description
-         *     Send emails to multiple contacts, possibly with a time delay.
+         * @description Send emails to multiple contacts, possibly with a time delay.
          *
          *     To send emails using the API, you must first verify the domain you want to
          *     send emails from. You can add and verify custom domains in the settings.
-         *
          */
         post: operations["sendEmail"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/email/domains": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all custom domains
+         * @description List all custom domains for your organization, including their verification status and DNS records.
+         */
+        get: operations["listCustomDomains"];
+        /**
+         * Add or update a custom domain for email sending
+         * @description Add or update a custom domain for sending emails. After adding a domain, you'll need to verify it by adding the provided DNS records.
+         */
+        put: operations["putCustomDomain"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/email/domains/{domainName}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Start verification process for a custom domain
+         * @description Start the verification process for a custom domain. Make sure you've added the DNS records before starting verification.
+         */
+        patch: operations["startVerifyingCustomDomain"];
+        trace?: never;
+    };
+    "/email/domains/{domainName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a custom domain
+         * @description Delete a custom domain from your organization. This will prevent you from sending emails from this domain.
+         */
+        delete: operations["deleteCustomDomain"];
         options?: never;
         head?: never;
         patch?: never;
@@ -107,9 +167,7 @@ export interface paths {
         put?: never;
         /**
          * Create an AI phone agent
-         * @description
-         *       Create an AI phone agent. This phone number can be used to receive and make phone calls. For now, this API only supports US phone numbers. Email mo@open.cx for other countries.
-         *
+         * @description Create an AI phone agent. This phone number can be used to receive and make phone calls. For now, this API only supports US phone numbers. Email mo@open.cx for other countries.
          */
         post: operations["createPhoneAgent"];
         delete?: never;
@@ -134,6 +192,43 @@ export interface paths {
         head?: never;
         /** Update an AI phone agent */
         patch: operations["updatePhoneAgent"];
+        trace?: never;
+    };
+    "/phone/outbound-call": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Make an AI phone call
+         * @description Initiate an outbound call using an AI phone agent
+         */
+        post: operations["makeOutboundCall"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/whatsapp/send-template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Directly send a WhatsApp template to a contact */
+        post: operations["sendTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/chat/sessions": {
@@ -286,12 +381,10 @@ export interface paths {
         put?: never;
         /**
          * Add contacts to a continuous sequence
-         * @description
-         *     Add contacts to a continuous sequence (`is_continuous` property of the sequence must be `true`).
+         * @description Add contacts to a continuous sequence (`is_continuous` property of the sequence must be `true`).
          *     Contacts will *not* be added to the sequence if the sequence's `filter` does not apply to the contact.
          *
          *     Any contacts added will automatically be added to contacts if they don't already exist.
-         *
          */
         post: operations["addContactsToSequence"];
         delete?: never;
@@ -317,6 +410,465 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/training": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all custom trainings
+         * @description Retrieve all custom trainings defined for your organization.
+         *     Custom trainings are used to teach the AI how to respond to specific scenarios
+         *     or questions that are unique to your business or use case.
+         */
+        get: operations["getCustomTrainings"];
+        put?: never;
+        /**
+         * Create a custom training
+         * @description Create a new custom training entry for your organization.
+         *     Custom trainings help the AI understand how to respond to specific questions or scenarios
+         *     that are unique to your business. Each custom training consists of a title (the question or scenario),
+         *     a body (the desired answer), and a category for organization.
+         */
+        post: operations["createCustomTraining"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/training/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update a custom training
+         * @description Update an existing custom training entry identified by its ID.
+         *     This allows you to modify the title, body, or category of a custom training
+         *     that has already been created.
+         */
+        put: operations["updateCustomTraining"];
+        post?: never;
+        /**
+         * Delete a custom training
+         * @description Delete an existing custom training entry identified by its ID.
+         *     This permanently removes the training data from your organization's configuration.
+         */
+        delete: operations["deleteCustomTraining"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/training/generate-scenario/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Generate training scenario from chat history
+         * @description Generate a custom training scenario title based on an existing chat session.
+         *     This feature analyzes the conversation in a chat session and creates a title that
+         *     captures the core customer issue or question, which can then be used as a starting
+         *     point for creating a new custom training entry.
+         */
+        get: operations["generateScenarioFromChat"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get customer insights
+         * @description Retrieve analyzed customer feedback and insights
+         */
+        get: operations["getVocInsights"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insights/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a specific customer insight
+         * @description Retrieve detailed information about a specific insight including affected sessions
+         */
+        get: operations["getVocInsight"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insights/{id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark an insight as resolved
+         * @description Resolves a customer insight and optionally adds resolution details
+         */
+        post: operations["resolveInsight"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insights/{id}/assign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Assign insight to a group
+         * @description Assigns a customer insight to a specific group
+         */
+        post: operations["assignInsight"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insights/team-resolution-stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get team resolution statistics for customer insights
+         * @description Retrieves statistics about how many customer insights each person/team has resolved
+         */
+        get: operations["getTeamResolutionStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all teams
+         * @description Retrieve all teams for the organization
+         */
+        get: operations["getTeams"];
+        put?: never;
+        /**
+         * Create new team
+         * @description Create a new team in the organization
+         */
+        post: operations["createTeam"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{teamId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get specific team
+         * @description Retrieve details of a specific team
+         */
+        get: operations["getTeam"];
+        /**
+         * Update team
+         * @description Update an existing team
+         */
+        put: operations["updateTeam"];
+        post?: never;
+        /**
+         * Delete team
+         * @description Delete an existing team
+         */
+        delete: operations["deleteTeam"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{teamId}/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get users in team
+         * @description Retrieve all users in a specific team
+         */
+        get: operations["getUsersInTeam"];
+        put?: never;
+        /**
+         * Add user to team
+         * @description Add a user to an existing team
+         */
+        post: operations["addUserToTeam"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{teamId}/users/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove user from team
+         * @description Remove a user from a team
+         */
+        delete: operations["removeUserFromTeam"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/redaction/message": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Redact a specific message
+         * @description Redact a specific message by message ID, including any attached images
+         */
+        post: operations["redactMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/redaction/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Redact all messages in a session
+         * @description Redact all messages in a session by session ID, including any attached images
+         */
+        post: operations["redactSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/crawl": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get paginated crawl jobs
+         * @description Retrieve a paginated list of crawl jobs for your organization. You can filter by status and control pagination with page and limit parameters.
+         */
+        get: operations["getCrawls"];
+        put?: never;
+        /**
+         * Submit a URL for crawling
+         * @description Submit a website URL to be crawled and indexed into your knowledge base. The crawler will extract content from the specified URL and any linked pages within the same domain.
+         */
+        post: operations["crawlUrl"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/crawl/{jobId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check crawl job status
+         * @description Check the status of a crawl job by its ID. Returns the current status and progress information.
+         */
+        get: operations["checkStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/csat/scores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all CSAT scores
+         * @description Retrieve all CSAT scores for the organization with pagination
+         */
+        get: operations["getCsatScores"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/csat/scores/{score_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get specific CSAT score
+         * @description Retrieve details of a specific CSAT score
+         */
+        get: operations["getCsatScore"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/csat/scores/session/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get session CSAT score
+         * @description Retrieve CSAT score for a specific session
+         */
+        get: operations["getCsatScoreBySession"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/csat/settings/channel/{channel}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check if CSAT is enabled for a channel
+         * @description Check whether CSAT collection is enabled for the specified channel
+         */
+        get: operations["isCsatEnabledForChannel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/csat/sessions/{session_id}/sent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check if CSAT has been sent for a session
+         * @description Check whether a CSAT request has been sent for the specified session
+         */
+        get: operations["hasSessionCsatSent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -335,6 +887,21 @@ export interface components {
         AddContactsToSequenceOutput: {
             /** Format: uuid */
             run_id: string;
+        };
+        AddUserToGroupDto: {
+            userId: number;
+            groupId: string;
+        };
+        AllContactsFilter: {
+            /** @enum {string} */
+            type: "all_contacts";
+        };
+        AssignInsightDto: {
+            /**
+             * Format: uuid
+             * @description The ID of the group to assign the insight to
+             */
+            groupId: string;
         };
         AuthenticateUserPayloadDto: {
             /**
@@ -359,6 +926,11 @@ export interface components {
              */
             phone?: string;
             /**
+             * @description The user's language
+             * @enum {string}
+             */
+            language?: "en" | "fr" | "de" | "nl" | "pl" | "pt" | "es" | "it" | "ru" | "ja" | "ko" | "zh" | "ar" | "tr" | "sv" | "da" | "no" | "fi" | "el" | "cs" | "hu" | "th" | "vi" | "id" | "he" | "hi" | "uk" | "ro" | "bg" | "hr" | "sk" | "sl" | "sr" | "et" | "lv" | "lt" | "is" | "ga" | "ms" | "tl" | "fa" | "bn" | "ta" | "te" | "ur" | "sw" | "zu" | "af" | "sq" | "hy" | "az" | "eu" | "be" | "bs" | "ca" | "cy" | "tr";
+            /**
              * @description Custom data
              * @example {
              *       "customKey": "customValue"
@@ -367,16 +939,36 @@ export interface components {
             customData?: {
                 [key: string]: string | number | boolean;
             };
+            /** @description Optional context to be given to the AI agent when responding to this user. */
+            chat_context?: string;
+            /** @description HTTP parameter overrides to be used when executing actions for this user. Overrides org-level parameters, but is overridden by parameters passed when sending a message. */
+            http_action_overrides?: {
+                query_params?: {
+                    [key: string]: string;
+                };
+                path_params?: {
+                    [key: string]: string;
+                };
+                body_params?: {
+                    [key: string]: string;
+                };
+                headers?: {
+                    [key: string]: string;
+                };
+            };
         };
         ChatMessageSender: {
             /** @enum {string} */
             type: "contact";
+            name?: string;
         } | {
             /** @enum {string} */
             type: "ai";
+            name?: string;
         } | {
             /** @enum {string} */
             type: "human_agent";
+            name?: string;
         };
         Contact: {
             /** Format: uuid */
@@ -389,6 +981,11 @@ export interface components {
                 [key: string]: string;
             } | null;
         };
+        ContactBelongsToSegmentFilter: {
+            /** @enum {string} */
+            type: "contact_belongs_to_segment";
+            segment_id: string;
+        };
         ContactInput: {
             /** Format: email */
             email?: string;
@@ -397,11 +994,32 @@ export interface components {
             custom_data?: {
                 [key: string]: string;
             };
+            http_action_overrides?: {
+                query_params?: {
+                    [key: string]: string;
+                };
+                path_params?: {
+                    [key: string]: string;
+                };
+                body_params?: {
+                    [key: string]: string;
+                };
+                headers?: {
+                    [key: string]: string;
+                };
+            };
         };
         ContactsAffectedBySequenceFilter: {
             /** @enum {string} */
             type: "contacts_affected_by_sequence";
             sequence_id: string;
+        };
+        ContactsAttributesFilter: {
+            /** @enum {string} */
+            type: "contacts_attributes_in";
+            attributes?: {
+                [key: string]: string;
+            }[];
         };
         ContactsCreatedAtFilter: {
             /** @enum {string} */
@@ -424,25 +1042,102 @@ export interface components {
             type: "contacts_email_domain_name_in";
             domain_name_in: string[];
         };
-        ContactsFilter: components["schemas"]["ContactsIdsFilter"] | components["schemas"]["ContactsCreatedAtFilter"] | components["schemas"]["ContactsEmailDomainNameFilter"] | components["schemas"]["ContactsAffectedBySequenceFilter"];
+        ContactsEmailFilter: {
+            /** @enum {string} */
+            type: "contacts_email_in";
+            email_in: string[];
+        };
+        ContactsFilter: components["schemas"]["AllContactsFilter"] | components["schemas"]["ContactsIdsFilter"] | components["schemas"]["ContactsCreatedAtFilter"] | components["schemas"]["ContactsEmailDomainNameFilter"] | components["schemas"]["ContactsAffectedBySequenceFilter"] | components["schemas"]["ContactsNameFilter"] | components["schemas"]["ContactsPhoneNumberFilter"] | components["schemas"]["ContactsEmailFilter"] | components["schemas"]["ContactsAttributesFilter"] | components["schemas"]["ContactsSessionsAttributesFilter"] | components["schemas"]["ContactBelongsToSegmentFilter"] | components["schemas"]["LastContactedAtFilter"] | components["schemas"]["LastContactedAtWithHandoffFilter"];
         ContactsIdsFilter: {
             /** @enum {string} */
             type: "contact_id_in";
             contact_ids: string[];
         };
+        ContactsNameFilter: {
+            /** @enum {string} */
+            type: "contacts_name_in";
+            name_in: string[];
+        };
+        ContactsPhoneNumberFilter: {
+            /** @enum {string} */
+            type: "contacts_phone_number_in";
+            phone_number_in: string[];
+        };
+        ContactsSessionsAttributesFilter: {
+            /** @enum {string} */
+            type: "contacts_sessions_attributes_in";
+            attributes?: {
+                [key: string]: string;
+            }[];
+        };
+        CrawlJobDto: {
+            id: string;
+            org_id: string;
+            url: string;
+            /** @enum {string} */
+            status: "cancelled" | "completed" | "failed" | "scraping";
+            created_at: string;
+            updated_at: string;
+            completed_at: string | null;
+            completed_pages: number | null;
+            error_message: string | null;
+            total_pages: number | null;
+        };
+        CrawlStatusDto: {
+            success: boolean;
+            /** @enum {string} */
+            status: "cancelled" | "completed" | "failed" | "scraping";
+        };
+        CrawlUrlDto: {
+            /**
+             * @description The URL to crawl
+             * @example https://example.com
+             */
+            url: string;
+            /**
+             * @description Maximum number of pages to crawl (1-1000)
+             * @default 100
+             * @example 100
+             */
+            limit: number;
+            /**
+             * @description Paths to exclude from crawling
+             * @example [
+             *       "/blog/*",
+             *       "/private/*"
+             *     ]
+             */
+            excludePaths?: string[];
+            /**
+             * @description Whether to allow external links
+             * @default true
+             * @example true
+             */
+            allowExternalLinks: boolean;
+            /**
+             * @description Paths to include in crawling
+             * @example [
+             *       "/blog/*",
+             *       "/private/*"
+             *     ]
+             */
+            includePaths?: string[];
+        };
         /** @example {} */
         CreateChatSessionInput: {
             /** Format: uuid */
             contact_id?: string;
-            /** @default {
+            /**
+             * @default {
              *       "type": "api"
-             *     } */
+             *     }
+             */
             channel: {
                 /**
                  * ChatSessionChannelType
                  * @enum {string}
                  */
-                type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "api" | "web_voice";
+                type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "instagram" | "messenger" | "api" | "web_voice";
             };
         };
         CreateChatSessionOutput: {
@@ -451,6 +1146,57 @@ export interface components {
              * @description ID of the created session.
              */
             id: string;
+        };
+        CreateCustomTrainingDTO: {
+            /**
+             * @description The type of custom training.
+             *     This is the type of custom training that will be created.
+             * @enum {string}
+             */
+            type?: "BEHAVIORAL" | "SCENARIO_SPECIFIC";
+            /**
+             * @description The draft status of the custom training.
+             *     This is the draft status of the custom training.
+             */
+            is_draft?: boolean;
+            /**
+             * @description The directory ID for the custom training.
+             *     This is the ID of the directory that the custom training will be added to.
+             *     This is optional.
+             */
+            directory_id: string | null;
+            /**
+             * @description The answer for the custom training.
+             *     This is the answer for the custom training.
+             */
+            answer: string;
+            /**
+             * @description The question for the custom training.
+             *     This is the question for the custom training.
+             */
+            question: string;
+            /** @description (is array is empty, instruction works for all channels, if array contains channels, instruction is limited to those channels */
+            restricted_to_channels: components["schemas"]["SessionChannel"][];
+            /** @description (is array is empty, instruction works for all segments, if array contains segments, instruction is limited to those segments */
+            restricted_to_segments: string[];
+        };
+        CreateGroupDto: {
+            /**
+             * @description The name of the group
+             * @example Support Team
+             */
+            name: string;
+            /**
+             * @description The description of the group
+             * @example Team responsible for customer support
+             */
+            description?: string;
+            /**
+             * @description Whether this team is enabled to receive support sessions
+             * @default false
+             * @example false
+             */
+            is_support_enabled: boolean;
         };
         CreatePhoneAgentDto: {
             /** @description The name of the AI phone agent */
@@ -467,6 +1213,11 @@ export interface components {
             /** @description The phone number of the human agent to hand off the call to */
             handoff_phone_number?: string | null;
             /**
+             * @description The speed of the AI phone agent
+             * @default 1
+             */
+            speed: number | null;
+            /**
              * @description Whether the agent can be interrupted or not
              * @default true
              */
@@ -481,34 +1232,24 @@ export interface components {
             data_collection_webhook_url?: string | null;
             /**
              * @description The AI model of the agent. This cannot be changed after creation
-             * @default oppie-vox
+             * @default oppie-vox-livekit
              * @enum {string}
              */
-            model: "oppie-vox" | "oppie-vox-turbo" | "oppie-vox-2";
+            model: "oppie-vox" | "oppie-vox-turbo" | "oppie-vox-2" | "oppie-vox-livekit";
             /** @description The first message the AI phone agent should say */
             first_message?: string | null;
             /** @description The voice id */
             voice_id?: string | null;
-            flow: {
-                /** @enum {string} */
-                type: "root" | "condition" | "action";
-                content: string;
-                children: {
-                    /** @enum {string} */
-                    type: "root" | "condition" | "action";
-                    content: string;
-                    children: {
-                        /** @enum {string} */
-                        type: "root" | "condition" | "action";
-                        content: string;
-                        children: unknown[];
-                    }[];
-                }[];
-            } | null;
+            flow?: unknown;
             /** @description Whether the AI phone agent should use the organization's knowledgebase */
             use_org_knowledgebase?: boolean | null;
+            /** @description Whether the AI phone agent should be in manual mode */
+            manual_mode?: boolean | null;
+            /** @description The custom LLM to use for the AI phone agent */
+            custom_llm?: string | null;
         };
-        /** @example {
+        /**
+         * @example {
          *       "steps": [
          *         {
          *           "action": {
@@ -530,14 +1271,15 @@ export interface components {
          *             "and": [
          *               {
          *                 "type": "contacts_created_at_between",
-         *                 "before": "2025-02-05T09:47:27.411Z",
-         *                 "after": "2025-02-05T09:47:27.411Z"
+         *                 "before": "2025-10-24T22:10:36.894Z",
+         *                 "after": "2025-10-24T22:10:36.894Z"
          *               }
          *             ]
          *           }
          *         ]
          *       }
-         *     } */
+         *     }
+         */
         CreateSequenceInput: {
             /** @default New Sequence */
             name: string;
@@ -576,6 +1318,17 @@ export interface components {
                     data: {
                         message: string;
                     };
+                } | {
+                    /** @enum {string} */
+                    type: "send_whatsapp_messages";
+                    data: {
+                        phone_number_id: string;
+                        template: {
+                            name: string;
+                            language: string;
+                            parameters: components["schemas"]["WhatsAppTemplateMappingDto"];
+                        };
+                    };
                 };
                 delay_in_minutes?: number;
             }[];
@@ -584,6 +1337,70 @@ export interface components {
             /** Format: uuid */
             id: string;
         };
+        CsatScorePublic: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            organization_id: string;
+            /** Format: uuid */
+            session_id: string;
+            score: number;
+            comment: string | null;
+            /** @enum {string} */
+            channel: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "instagram" | "messenger" | "api" | "web_voice";
+            created_at: string;
+            updated_at: string;
+            contact: components["schemas"]["Contact"] & unknown;
+        };
+        CsatScorePublicResponseDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            organization_id: string;
+            /** Format: uuid */
+            session_id: string;
+            score: number;
+            comment: string | null;
+            /** @enum {string} */
+            channel: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "instagram" | "messenger" | "api" | "web_voice";
+            created_at: string;
+            updated_at: string;
+            contact: components["schemas"]["Contact"] & unknown;
+        };
+        CustomTrainingDto: {
+            /** @description The ID of the custom training */
+            id: string;
+            organization_id: string;
+            question: string;
+            /** @description The answer of the custom training */
+            answer: string;
+            /** @description The draft status of the custom training */
+            is_draft: boolean;
+            accepted_by: number | null;
+            /** @description Draft payload with structured data */
+            draft_payload?: unknown;
+            learned_from_session_id: string | null;
+            /**
+             * @description The type of custom training
+             * @enum {string}
+             */
+            type: "BEHAVIORAL" | "SCENARIO_SPECIFIC";
+            /** @description (is array is empty, instruction works for all segments, if array contains segments, instruction is limited to those segments */
+            restricted_to_segments: string[];
+            /** @description (is array is empty, instruction works for all channels, if array contains channels, instruction is limited to those channels */
+            restricted_to_channels: components["schemas"]["SessionChannel"][];
+            created_at: string;
+            updated_at: string;
+            /** @description The directory ID of the custom training */
+            directory_id: string | null;
+        };
+        DomainRecord: {
+            type: string;
+            name: string;
+            value: string;
+            ttl: string;
+            status: string;
+        };
         EmailRecipient: {
             /** Format: email */
             to_email: string;
@@ -591,15 +1408,19 @@ export interface components {
             email_body?: string;
             email_subject?: string;
             email_sender_name?: string;
-            /** @description
-             *     Whether the email is transactional. If set to `false`, Open will check if the
+            /**
+             * @description Whether the email is transactional. If set to `false`, Open will check if the
              *     contact has [unsubscribed/opted out](./unsubscribe_api) of receiving marketing
-             *     emails before sending the email. Defaults to `true`. */
+             *     emails before sending the email. Defaults to `true`.
+             */
             email_is_transactional?: boolean;
         };
         FileUploadDto: {
             /** Format: binary */
             file: string;
+        };
+        GenerateScenarioResponseDto: {
+            title: string;
         };
         GenericResponseDto: {
             data?: {
@@ -622,19 +1443,37 @@ export interface components {
                  * ChatSessionChannelType
                  * @enum {string}
                  */
-                type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "api" | "web_voice";
+                type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "instagram" | "messenger" | "api" | "web_voice";
             };
             contact?: components["schemas"]["Contact"];
             language?: string;
             assignee_id?: string;
+            custom_data?: {
+                [key: string]: string | number | boolean;
+            };
+            /** @description Present if the session is assigned to a team. */
+            team?: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                description?: string;
+            };
             /** @description Present if the conversation was handed off to a human. */
             handoff?: {
                 /**
                  * HandoffSentiment
                  * @enum {string}
                  */
-                sentiment?: "angry" | "neutral" | "happy";
+                sentiment?: "angry" | "happy" | "neutral";
                 summary: string;
+            };
+            /** @description Present if the session is associated with a ticketing system. */
+            ticketing_system?: {
+                /** @enum {string} */
+                name: "dynamics365" | "freshchat" | "freshdesk" | "gorgias" | "hubspot" | "intercom" | "open" | "salesforce" | "twilio_flex" | "zendesk" | "zendesk_v2";
+                external_id: string;
+                /** @enum {string} */
+                id_type: "conversation_id" | "ticket_id" | "case_id" | "conversation_sid";
             };
             /**
              * DateTime
@@ -649,6 +1488,33 @@ export interface components {
              */
             updated_at: string | null;
         };
+        GetCrawlsDto: {
+            data: {
+                id: string;
+                org_id: string;
+                url: string;
+                /** @enum {string} */
+                status: "cancelled" | "completed" | "failed" | "scraping";
+                created_at: string;
+                updated_at: string;
+                completed_at: string | null;
+                completed_pages: number | null;
+                error_message: string | null;
+                total_pages: number | null;
+            }[];
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+            hasNextPage: boolean;
+            hasPrevPage: boolean;
+        };
+        GetCustomDomainsOutput: {
+            domainName: string;
+            /** @enum {string} */
+            domainNameVerificationStatus: "pending" | "verified" | "failed" | "temporary_failure" | "not_started";
+            records: components["schemas"]["DomainRecord"][];
+        }[];
         GetSequenceOutput: {
             id: string;
             name: string;
@@ -670,6 +1536,69 @@ export interface components {
             ended_at: string | null;
             status: components["schemas"]["SequenceStatus"];
         };
+        GetVocResponseDto: {
+            data: {
+                /** Format: uuid */
+                id: string;
+                org_id: string;
+                /** Format: uuid */
+                group_id: string | null;
+                type: string;
+                content: string;
+                /** @enum {string} */
+                sentiment: "POSITIVE" | "NEGATIVE" | "NEUTRAL";
+                category: string | null;
+                user_story: string | null;
+                occurrence_count: number;
+                is_resolved: number;
+                resolved_at: string | null;
+                resolved_by: number | null;
+                is_snoozed: number;
+                snoozed_at: string | null;
+                snoozed_by: number | null;
+                created_at: string;
+                updated_at: string;
+                last_seen_at: string | null;
+                deep_research: string | null;
+                generating_deep_research: number;
+                sessions?: string[];
+            }[];
+            total: number;
+            page: number;
+            totalPages: number;
+        };
+        LastContactedAtFilter: {
+            /** @enum {string} */
+            type: "last_contacted_at_between";
+            /**
+             * DateTime
+             * Format: date-time
+             * @description ISO 8601 date-time string
+             */
+            after?: string | null;
+            /**
+             * DateTime
+             * Format: date-time
+             * @description ISO 8601 date-time string
+             */
+            before?: string | null;
+        };
+        LastContactedAtWithHandoffFilter: {
+            /** @enum {string} */
+            type: "last_contacted_at_with_handoff_between";
+            /**
+             * DateTime
+             * Format: date-time
+             * @description ISO 8601 date-time string
+             */
+            after?: string | null;
+            /**
+             * DateTime
+             * Format: date-time
+             * @description ISO 8601 date-time string
+             */
+            before?: string | null;
+        };
         /** @description Paginated response. */
         ListChatHistoryOutput: {
             items: {
@@ -690,14 +1619,81 @@ export interface components {
                     };
                 } | {
                     /** @enum {string} */
-                    type: "handoff";
-                    integration?: {
+                    type: "workflow_message";
+                    workflow_id: string | null;
+                    workflow_run_id: string | null;
+                    content: {
                         /** @enum {string} */
-                        type: "zendesk";
+                        type: "text";
+                        text: string;
                     };
                 } | {
                     /** @enum {string} */
+                    type: "sequence_message";
+                    sequence_id: string | null;
+                    content: {
+                        /** @enum {string} */
+                        type: "text";
+                        text: string;
+                    };
+                } | {
+                    /** @enum {string} */
+                    type: "handoff";
+                    integration?: {
+                        /** @enum {string} */
+                        type: "zendesk" | "salesforce-miaw";
+                    };
+                } | {
+                    /** @enum {string} */
+                    type: "closed_resolved_by_agent";
+                } | {
+                    /** @enum {string} */
+                    type: "closed_resolved_by_system";
+                } | {
+                    /** @enum {string} */
+                    type: "closed_resolved_by_api";
+                } | {
+                    /** @enum {string} */
+                    type: "closed_unresolved_by_agent";
+                } | {
+                    /** @enum {string} */
+                    type: "closed_unresolved_by_system";
+                } | {
+                    /** @enum {string} */
+                    type: "closed_unresolved_by_api";
+                } | {
+                    /** @enum {string} */
+                    type: "sub_status_set_by_agent";
+                    sub_status_id: string | null;
+                } | {
+                    /** @enum {string} */
+                    type: "sub_status_set_by_system";
+                    sub_status_id: string | null;
+                } | {
+                    /** @enum {string} */
+                    type: "sub_status_set_by_api";
+                    sub_status_id: string | null;
+                } | {
+                    /** @enum {string} */
+                    type: "sub_status_removed_by_agent";
+                    sub_status_id: string | null;
+                } | {
+                    /** @enum {string} */
+                    type: "sub_status_removed_by_system";
+                    sub_status_id: string | null;
+                } | {
+                    /** @enum {string} */
+                    type: "sub_status_removed_by_api";
+                    sub_status_id: string | null;
+                } | {
+                    /** @enum {string} */
                     type: "ai_resolved_issue";
+                } | {
+                    /** @enum {string} */
+                    type: "ai_assumed_issue_resolved";
+                } | {
+                    /** @enum {string} */
+                    type: "user_confirmed_issue_resolved";
                 } | {
                     /** @enum {string} */
                     type: "human_agent_comment";
@@ -715,6 +1711,24 @@ export interface components {
                     /** @enum {string} */
                     type: "human_agent_takeover";
                     human_agent_id: number;
+                } | {
+                    /** @enum {string} */
+                    type: "human_agent_reopened_session";
+                    human_agent_id: number;
+                } | {
+                    /** @enum {string} */
+                    type: "state_checkpoint";
+                    payload?: unknown;
+                } | {
+                    /** @enum {string} */
+                    type: "csat_requested";
+                } | {
+                    /** @enum {string} */
+                    type: "csat_submitted";
+                    payload: {
+                        score: number;
+                        feedback: string | null;
+                    };
                 };
             }[];
             /** @description The `cursor` for the request to get the next set of items. Null if there is no more data. */
@@ -732,19 +1746,37 @@ export interface components {
                      * ChatSessionChannelType
                      * @enum {string}
                      */
-                    type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "api" | "web_voice";
+                    type: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "instagram" | "messenger" | "api" | "web_voice";
                 };
                 contact?: components["schemas"]["Contact"];
                 language?: string;
                 assignee_id?: string;
+                custom_data?: {
+                    [key: string]: string | number | boolean;
+                };
+                /** @description Present if the session is assigned to a team. */
+                team?: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string;
+                    description?: string;
+                };
                 /** @description Present if the conversation was handed off to a human. */
                 handoff?: {
                     /**
                      * HandoffSentiment
                      * @enum {string}
                      */
-                    sentiment?: "angry" | "neutral" | "happy";
+                    sentiment?: "angry" | "happy" | "neutral";
                     summary: string;
+                };
+                /** @description Present if the session is associated with a ticketing system. */
+                ticketing_system?: {
+                    /** @enum {string} */
+                    name: "dynamics365" | "freshchat" | "freshdesk" | "gorgias" | "hubspot" | "intercom" | "open" | "salesforce" | "twilio_flex" | "zendesk" | "zendesk_v2";
+                    external_id: string;
+                    /** @enum {string} */
+                    id_type: "conversation_id" | "ticket_id" | "case_id" | "conversation_sid";
                 };
                 /**
                  * DateTime
@@ -779,6 +1811,22 @@ export interface components {
             /** @description The `cursor` for the request to get the next set of items. Null if there is no more data. */
             next: string | null;
         };
+        MakeOutboundCallDto: {
+            orgId: string;
+            phoneAgentId: string;
+            contact: {
+                id: string;
+            } | {
+                phoneNumber: string;
+            };
+        };
+        PaginatedCsatScoresPublicResponseDto: {
+            data: components["schemas"]["CsatScorePublic"][];
+            current_page: number;
+            per_page: number;
+            total: number;
+            total_pages: number;
+        };
         PhoneAgentDto: {
             id: string;
             org_id: string;
@@ -789,35 +1837,84 @@ export interface components {
             language: string | null;
             accent: string | null;
             handoff_phone_number: string | null;
+            speed: number | null;
             interruptible: boolean;
             actionIds: string[] | null;
             instructions: string[] | null;
             data_collection_fields: string[] | null;
             data_collection_webhook_url: string | null;
             /** @enum {string} */
-            model: "oppie-vox" | "oppie-vox-turbo" | "oppie-vox-2";
+            model: "oppie-vox" | "oppie-vox-turbo" | "oppie-vox-2" | "oppie-vox-livekit";
             voice_id: string | null;
             first_message: string | null;
             created_at: string;
             updated_at: string;
             provider_external_id: string | null;
-            flow: {
-                /** @enum {string} */
-                type: "root" | "condition" | "action";
-                content: string;
-                children: {
-                    /** @enum {string} */
-                    type: "root" | "condition" | "action";
-                    content: string;
-                    children: {
-                        /** @enum {string} */
-                        type: "root" | "condition" | "action";
-                        content: string;
-                        children: unknown[];
-                    }[];
-                }[];
-            } | null;
+            flow?: unknown;
+            manual_mode: boolean;
+            custom_llm: string | null;
             use_org_knowledgebase: boolean;
+        };
+        PutCustomDomainInput: {
+            /** @description The domain name to add or update */
+            domainName: string;
+        };
+        PutCustomDomainOutput: {
+            domainRecords: components["schemas"]["DomainRecord"][];
+            /** @enum {string} */
+            domainStatus: "pending" | "verified" | "failed" | "temporary_failure" | "not_started";
+        };
+        RedactMessageDto: {
+            /**
+             * @description The message UUID to be redacted
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            messageId: string;
+            /**
+             * @description Optional reason for redaction
+             * @example Contains sensitive customer information
+             */
+            reason?: string;
+        };
+        RedactSessionDto: {
+            /**
+             * @description The session UUID whose messages will be redacted
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            sessionId: string;
+            /**
+             * @description Optional reason for redaction
+             * @example Customer requested data removal
+             */
+            reason?: string;
+        };
+        RedactionResponseDto: {
+            /**
+             * @description Whether the redaction was successful
+             * @example true
+             */
+            success: boolean;
+            /**
+             * @description Success or error message
+             * @example Message successfully redacted
+             */
+            message: string;
+            /**
+             * @description ID of the redacted item (message or session)
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            itemId: string;
+            /**
+             * @description Type of redaction performed
+             * @example message
+             * @enum {string}
+             */
+            redactionType: "message" | "session";
+            /**
+             * @description Number of items affected
+             * @example 1
+             */
+            affectedCount: number;
         };
         SaveContactInput: {
             contact: components["schemas"]["ContactInput"];
@@ -835,10 +1932,11 @@ export interface components {
              * @description The email to send from. This email's domain name must be added and verified. Otherwise, the request will fail with a 400 status code.
              */
             from_email: string;
-            /** @description
-             *     Array of contacts to receive emails. The only required field is `to_email`, with the rest of the fields having fallback values that can be specified on the top level.
+            /**
+             * @description Array of contacts to receive emails. The only required field is `to_email`, with the rest of the fields having fallback values that can be specified on the top level.
              *
-             *     It's possible to repeat the same contact email in the array with different `delay_in_minutes` values to create a sequence of scheduled emails for that contact (e.g. for onboarding). */
+             *     It's possible to repeat the same contact email in the array with different `delay_in_minutes` values to create a sequence of scheduled emails for that contact (e.g. for onboarding).
+             */
             recipients: components["schemas"]["EmailRecipient"][];
             /** @description How much time (in minutes) to wait before sending the emails. */
             delay_in_minutes?: number;
@@ -847,16 +1945,18 @@ export interface components {
             /** @description Fallback body of the email in HTML format. */
             fallback_email_body?: string;
         };
-        /** @example {
+        /**
+         * @example {
          *       "sender": "contact",
          *       "message": {
          *         "type": "text",
          *         "text": "Hello!"
          *       }
-         *     } */
+         *     }
+         */
         SendMessageInput: {
             /** @enum {string} */
-            sender: "contact";
+            sender: "contact" | "agent";
             /** @description Updated contact info */
             contact?: {
                 name?: string;
@@ -867,6 +1967,12 @@ export interface components {
                 custom_data?: {
                     [key: string]: string;
                 };
+            };
+            /** @description Agent info. if `id` is provided, the `name` and `avatar_url` are ignored. */
+            agent?: {
+                id?: number;
+                name?: string;
+                avatar_url?: string;
             };
             message: {
                 /** @enum {string} */
@@ -880,41 +1986,145 @@ export interface components {
                     url: string;
                 }[];
             };
+            /**
+             * @description If `true` and `sender` is `agent` and session is assigned to AI, the session will be reassigned to the agent.
+             * @default false
+             */
+            should_take_over_session_from_ai: boolean;
         };
         SendMessageOutput: {
-            /** @enum {boolean} */
-            success: true;
-            code?: string | "session_assigned_to_human_agent";
-            autopilotResponse?: {
-                /** @enum {string} */
-                type: "text";
-                value: {
-                    error: boolean;
-                    content: string;
-                };
-                id?: string;
-                mightSolveUserIssue: boolean;
-            };
-            uiResponse?: {
-                /** @enum {string} */
-                type: "ui";
-                value: {
+            success: boolean;
+            data: ({
+                /** @enum {boolean} */
+                success: true;
+                code?: string | "session_assigned_to_human_agent" | "response_cancelled" | "skipping_unuseful_response";
+                autopilotResponse?: {
                     /** @enum {string} */
-                    type: "ui_component";
-                    request_response?: unknown;
-                    name: string;
-                    content?: string;
+                    type: "text";
+                    value: {
+                        error: boolean;
+                        content: string;
+                    };
+                    id?: string;
+                    mightSolveUserIssue: boolean;
+                    completelyAndFullyCoveredUserIssue: boolean;
+                    debugInfo?: {
+                        actionCalls?: {
+                            action: {
+                                name: string;
+                                id: string;
+                                openapi?: {
+                                    openapi_spec_id?: string;
+                                    operation_spec?: unknown;
+                                    operation_id?: string;
+                                    operation_method?: string;
+                                };
+                                metadata?: unknown;
+                                required_form_submission?: boolean;
+                                is_handoff_like?: boolean;
+                            };
+                            arguments?: unknown;
+                            result?: unknown;
+                        }[];
+                        actionSearchQuery?: string;
+                        knowledge?: {
+                            source: string;
+                            source_type: string;
+                            url: string;
+                        }[];
+                        knowledge_used?: {
+                            content: string;
+                            source: string;
+                        }[];
+                        work_instructions_scanned?: {
+                            content: string;
+                        }[];
+                        /** @description Context provided from the client. For example, dynamic metadata sent from the widget such as: the current product name on the page, the current Shopify shop domain, etc etc. */
+                        client_context?: {
+                            [key: string]: unknown;
+                        } | null;
+                        /** @description Org-specific or message-type-specific debug data. */
+                        additional_debug_data?: {
+                            [key: string]: unknown;
+                        } | null;
+                        whatsapp_template_request?: unknown;
+                        rule_violation_reflections?: {
+                            rule_name: string;
+                            /** @description How the rule was violated */
+                            violation_description: string;
+                        }[];
+                    };
+                    mode?: {
+                        id: string;
+                        name: string;
+                        slug?: string;
+                    };
+                    didExitMode?: boolean;
                 };
-                mightSolveUserIssue: boolean;
+                uiResponse?: {
+                    /** @enum {string} */
+                    type: "ui";
+                    value: {
+                        /** @enum {string} */
+                        type: "ui_component";
+                        request_response?: unknown;
+                        name: string;
+                        content?: string;
+                    };
+                    mightSolveUserIssue: boolean;
+                };
+                sessionIsHandedOff?: boolean;
+                resolveArgs?: {
+                    /** @description Summary of the conversation with the user to be viewed by a human agent. */
+                    summary: string;
+                    /** @enum {string} */
+                    sentiment: "angry" | "happy" | "neutral";
+                };
+            } | {
+                /** @enum {boolean} */
+                success: false;
+                error: {
+                    code?: string;
+                    message?: string;
+                };
+            }) | {
+                /** @description The sent agent message */
+                message: {
+                    id: string;
+                };
             };
-            sessionIsHandedOff?: boolean;
-        } | {
-            /** @enum {boolean} */
-            success: false;
-            error: {
-                code?: string;
-                message?: string;
+        };
+        SendTemplateInputDto: {
+            /** @description The ID of the WhatsApp template to send */
+            template_id: string;
+            /** @description The ID of the WhatsApp number to send the template from */
+            phone_number_id: string;
+            /** @description A list of values to be used for the variables in the template. Values will be taken in order; `HEADER` then `BODY` then `BUTTONS`. This works whether the template's parameters are `NAMED` or `POSITIONAL`. */
+            variables: string[];
+            /** @description A contact identifier; either an ID, email, or phone number. If no contact is found, a new contact will be created (if a phone number was provided). */
+            contact: {
+                /** Format: uuid */
+                id: string;
+            } | {
+                /** Format: email */
+                email: string;
+            } | {
+                phone_number: string;
             };
+            /**
+             * @description Optional OpenCX session ID to send the template to.
+             *     If not provided, a new session will be created.
+             *     If provided ID is related to another WhatsApp phone number or is not a WhatsApp session or is related to a different contact, a new WhatsApp session will be created.
+             */
+            session_id?: string;
+        };
+        SendTemplateOutputDto: {
+            /** @description The message ID returned by WhatsApp */
+            whatsapp_message_id: string;
+            /** @description The message ID in our system */
+            opencx_message_id: string;
+            /** @description The session ID in our system */
+            opencx_session_id: string;
         };
         /** @enum {string|null} */
         SequenceStatus: "pending" | "complete" | "canceled" | "active" | null;
@@ -941,10 +2151,56 @@ export interface components {
                 data: {
                     message: string;
                 };
+            } | {
+                /** @enum {string} */
+                type: "send_whatsapp_messages";
+                data: {
+                    phone_number_id: string;
+                    template: {
+                        name: string;
+                        language: string;
+                        parameters: components["schemas"]["WhatsAppTemplateMappingDto"];
+                    };
+                };
             };
             delay_in_minutes?: number;
             started_at?: string;
             ended_at?: string;
+        };
+        /** @enum {string} */
+        SessionChannel: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "instagram" | "messenger" | "api" | "web_voice";
+        SessionRedactionResponseDto: {
+            /**
+             * @description Whether the redaction was successful
+             * @example true
+             */
+            success: boolean;
+            /**
+             * @description Success or error message
+             * @example Message successfully redacted
+             */
+            message: string;
+            /**
+             * @description ID of the redacted item (message or session)
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            itemId: string;
+            /**
+             * @description Type of redaction performed
+             * @example message
+             * @enum {string}
+             */
+            redactionType: "message" | "session";
+            /**
+             * @description Number of items affected
+             * @example 1
+             */
+            affectedCount: number;
+            /**
+             * @description Number of messages redacted in the session
+             * @example 5
+             */
+            messagesRedacted: number;
         };
         StartOneOffSequenceOutputDto: {
             data?: {
@@ -960,6 +2216,10 @@ export interface components {
         UpdateChatSessionInput: {
             /** @enum {string} */
             status?: "open" | "closed_resolved" | "closed_unresolved";
+            /** @description If true, will analyze the session and generate a summary and sentiment if the status is changed to "closed_resolved" or "closed_unresolved". */
+            generate_summary_and_sentiment_on_resolve?: boolean;
+            /** @description If true, the status change will be reflected in the integration (e.g., Zendesk, Salesforce) if there is a connected one. */
+            reflect_status_change_for_integration?: boolean;
         };
         UpdateContactInput: {
             contact: components["schemas"]["ContactInput"];
@@ -974,6 +2234,11 @@ export interface components {
             accent?: string | null;
             /** @description The phone number of the human agent to hand off the call to */
             handoff_phone_number?: string | null;
+            /**
+             * @description The speed of the AI phone agent
+             * @default 1
+             */
+            speed: number | null;
             /** @description Whether the agent can be interrupted or not */
             interruptible?: boolean;
             /** @description A list of action ids the AI phone agent has access to. A `null` value means all actions. An empty list means no actions */
@@ -988,28 +2253,19 @@ export interface components {
             voice_id?: string | null;
             /** @description The first message the AI phone agent should say */
             first_message?: string | null;
-            flow: {
-                /** @enum {string} */
-                type: "root" | "condition" | "action";
-                content: string;
-                children: {
-                    /** @enum {string} */
-                    type: "root" | "condition" | "action";
-                    content: string;
-                    children: {
-                        /** @enum {string} */
-                        type: "root" | "condition" | "action";
-                        content: string;
-                        children: unknown[];
-                    }[];
-                }[];
-            } | null;
+            flow?: unknown;
             /** @description Whether the AI phone agent should use the organization's knowledgebase (enabling it will increase the latency of the agent) */
             use_org_knowledgebase?: boolean | null;
+            /** @description Whether the AI phone agent should be in manual mode */
+            manual_mode?: boolean | null;
+            /** @description The custom LLM to use for the AI phone agent */
+            custom_llm?: string | null;
         };
-        /** @example {
+        /**
+         * @example {
          *       "name": "New name"
-         *     } */
+         *     }
+         */
         UpdateSequenceInput: {
             /** @default New Sequence */
             name: string;
@@ -1048,9 +2304,147 @@ export interface components {
                     data: {
                         message: string;
                     };
+                } | {
+                    /** @enum {string} */
+                    type: "send_whatsapp_messages";
+                    data: {
+                        phone_number_id: string;
+                        template: {
+                            name: string;
+                            language: string;
+                            parameters: components["schemas"]["WhatsAppTemplateMappingDto"];
+                        };
+                    };
                 };
                 delay_in_minutes?: number;
             }[];
+        };
+        VocInsightResponse: {
+            /** Format: uuid */
+            id: string;
+            org_id: string;
+            /** Format: uuid */
+            group_id: string | null;
+            type: string;
+            content: string;
+            /** @enum {string} */
+            sentiment: "POSITIVE" | "NEGATIVE" | "NEUTRAL";
+            category: string | null;
+            user_story: string | null;
+            occurrence_count: number;
+            is_resolved: number;
+            resolved_at: string | null;
+            resolved_by: number | null;
+            is_snoozed: number;
+            snoozed_at: string | null;
+            snoozed_by: number | null;
+            created_at: string;
+            updated_at: string;
+            last_seen_at: string | null;
+            deep_research: string | null;
+            generating_deep_research: number;
+            sessions: string[];
+        };
+        VocTeamResolutionStatDto: {
+            /** @description Name of the person who resolved insights */
+            name: string;
+            /** @description Team name */
+            team_name: string;
+            /** @description Number of VOC insights resolved by this person/team */
+            number_resolved: number;
+            /** @description URL of the user's avatar/profile picture */
+            avatar_url?: string | null;
+            /** @description Total number of sessions affected by resolved VOC insights */
+            total_sessions: number;
+        };
+        WhatsAppTemplateMappingDto: {
+            header?: {
+                /** @enum {string} */
+                type: "header";
+                parameters: ({
+                    /** @enum {string} */
+                    type: "text";
+                    text: components["schemas"]["WhatsAppTemplateVariableDto"];
+                    /** @description Required if parameters are named */
+                    parameter_name?: string;
+                } | {
+                    /**
+                     * @description JPEG, JPG, PNG
+                     * @enum {string}
+                     */
+                    type: "image";
+                    image: {
+                        link: components["schemas"]["WhatsAppTemplateVariableDto"];
+                    };
+                } | {
+                    /**
+                     * @description MP4
+                     * @enum {string}
+                     */
+                    type: "video";
+                    video: {
+                        link: components["schemas"]["WhatsAppTemplateVariableDto"];
+                    };
+                } | {
+                    /**
+                     * @description PDF
+                     * @enum {string}
+                     */
+                    type: "document";
+                    document: {
+                        link: components["schemas"]["WhatsAppTemplateVariableDto"];
+                    };
+                } | {
+                    /** @enum {string} */
+                    type: "location";
+                    location: {
+                        latitude: components["schemas"]["WhatsAppTemplateVariableDto"];
+                        longitude: components["schemas"]["WhatsAppTemplateVariableDto"];
+                        name: components["schemas"]["WhatsAppTemplateVariableDto"];
+                        address: components["schemas"]["WhatsAppTemplateVariableDto"];
+                    };
+                })[];
+            };
+            body?: {
+                /** @enum {string} */
+                type: "body";
+                parameters: {
+                    /** @enum {string} */
+                    type: "text";
+                    text: components["schemas"]["WhatsAppTemplateVariableDto"];
+                    /** @description Required if parameters are named */
+                    parameter_name?: string;
+                }[];
+            };
+            buttons?: {
+                /** @enum {string} */
+                type: "button";
+                /** @enum {string} */
+                index: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+                /** @enum {string} */
+                sub_type: "url";
+                parameters: {
+                    /** @enum {string} */
+                    type: "text";
+                    text: components["schemas"]["WhatsAppTemplateVariableDto"];
+                }[];
+            }[];
+        };
+        WhatsAppTemplateVariableDto: {
+            /** @enum {string} */
+            type: "GLOBAL_DYNAMIC";
+            /** @enum {string} */
+            ref: "CONTACT_NAME" | "CONTACT_EMAIL" | "CONTACT_NUMBER";
+            fallback: string;
+        } | {
+            /** @enum {string} */
+            type: "DYNAMIC";
+            ref: string;
+            fallback: string;
+        } | {
+            /** @enum {string} */
+            type: "CONSTANT";
+            value: string;
         };
         WidgetContactTokenResponseDto: {
             /** @description The JWT token to use for further requests */
@@ -1280,6 +2674,122 @@ export interface operations {
             };
         };
     };
+    listCustomDomains: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetCustomDomainsOutput"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    putCustomDomain: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PutCustomDomainInput"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PutCustomDomainOutput"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    startVerifyingCustomDomain: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                domainName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    deleteCustomDomain: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                domainName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
     listPhoneNumbers: {
         parameters: {
             query?: {
@@ -1403,11 +2913,79 @@ export interface operations {
             };
         };
     };
+    makeOutboundCall: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MakeOutboundCallDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    sendTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendTemplateInputDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SendTemplateOutputDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
     listChatSessions: {
         parameters: {
             query?: {
                 handed_off?: boolean;
-                channel_type?: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "api" | "web_voice";
+                channel_type?: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "instagram" | "messenger" | "api" | "web_voice";
+                created_after?: string;
+                created_before?: string;
+                updated_after?: string;
+                updated_before?: string;
                 status?: "open" | "closed_resolved" | "closed_unresolved";
                 /** @description Pagination cursor to fetch the next set of results */
                 cursor?: string;
@@ -1810,6 +3388,983 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WidgetContactTokenResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getCustomTrainings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns all custom trainings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomTrainingDto"][];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    createCustomTraining: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCustomTrainingDTO"];
+            };
+        };
+        responses: {
+            /** @description Returns the created custom training */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomTrainingDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    updateCustomTraining: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCustomTrainingDTO"];
+            };
+        };
+        responses: {
+            /** @description Custom training updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    deleteCustomTraining: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Custom training deleted successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    generateScenarioFromChat: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns a generated scenario title based on chat history */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerateScenarioResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getVocInsights: {
+        parameters: {
+            query?: {
+                type?: "FEEDBACK" | "BUG" | "FEATURE_REQUEST" | "QUOTE";
+                status?: "new" | "reviewed" | "archived" | "all" | "handed_off" | "snoozed";
+                sentiment?: "POSITIVE" | "NEGATIVE" | "NEUTRAL";
+                sortBy?: "created_at" | "updated_at" | "occurrence_count";
+                sortOrder?: "asc" | "desc";
+                page?: number;
+                limit?: number;
+                fromDate?: string;
+                toDate?: string;
+                /** @description Filter insights updated after this date */
+                updatedAfter?: string;
+                /** @description Filter insights updated before this date */
+                updatedBefore?: string;
+                sessionFromDate?: string;
+                sessionToDate?: string;
+                sessionId?: string;
+                groupId?: string;
+                minSessions?: number;
+                language?: string;
+                customData?: Record<string, never>[];
+                contactCustomData?: Record<string, never>[];
+                search?: string;
+                /** @description Include array of session IDs that contributed to each insight, might slow or block the request if there are many sessions. */
+                includeSessionIds?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved customer insights */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetVocResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getVocInsight: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved insight */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VocInsightResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    resolveInsight: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully resolved the insight */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    assignInsight: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignInsightDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully assigned the insight */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getTeamResolutionStats: {
+        parameters: {
+            query?: {
+                /** @description Filter resolutions from this date */
+                fromDate?: string;
+                /** @description Filter resolutions until this date */
+                toDate?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved team resolution statistics */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VocTeamResolutionStatDto"][];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getTeams: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved teams */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    createTeam: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateGroupDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully created team */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getTeam: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved team */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    updateTeam: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateGroupDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully updated team */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    deleteTeam: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully deleted team */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getUsersInTeam: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved users in team */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    addUserToTeam: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddUserToGroupDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully added user to team */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    removeUserFromTeam: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                teamId: string;
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully removed user from team */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    redactMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RedactMessageDto"];
+            };
+        };
+        responses: {
+            /** @description Message has been redacted successfully. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RedactionResponseDto"];
+                };
+            };
+            /** @description Message is already redacted */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    redactSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RedactSessionDto"];
+            };
+        };
+        responses: {
+            /** @description Session messages have been redacted successfully. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionRedactionResponseDto"];
+                };
+            };
+            /** @description No messages found to redact in this session */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getCrawls: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "cancelled" | "completed" | "failed" | "scraping";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Crawl jobs retrieved successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetCrawlsDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    crawlUrl: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrawlUrlDto"];
+            };
+        };
+        responses: {
+            /** @description Crawl job has been created successfully. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrawlJobDto"];
+                };
+            };
+            /** @description Invalid URL or parameters */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    checkStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Crawl job status retrieved successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrawlStatusDto"];
+                };
+            };
+            /** @description Crawl job not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getCsatScores: {
+        parameters: {
+            query: {
+                page: number;
+                per_page: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved CSAT scores */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCsatScoresPublicResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getCsatScore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                score_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved CSAT score */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CsatScorePublicResponseDto"];
+                };
+            };
+            /** @description CSAT score not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    getCsatScoreBySession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved CSAT score for the session, or null if not found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CsatScorePublicResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    isCsatEnabledForChannel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                channel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved CSAT channel setting */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @example web
+                         * @enum {string}
+                         */
+                        channel?: "web" | "email" | "phone_voice" | "slack" | "sms" | "whatsapp" | "instagram" | "messenger" | "api" | "web_voice";
+                        /** @example true */
+                        enabled?: boolean;
+                    };
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorDto"];
+                };
+            };
+        };
+    };
+    hasSessionCsatSent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully checked CSAT sent status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 123e4567-e89b-12d3-a456-426614174001 */
+                        session_id?: string;
+                        /** @example true */
+                        csat_sent?: boolean;
+                    };
                 };
             };
             /** @description Internal Server Error */
