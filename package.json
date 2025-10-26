@@ -1,6 +1,7 @@
 {
   "name": "opencx-oapi-ts",
   "description": "Type-safe client for the OpenCX API",
+  "version": "0.2.0",
   "main": "index.ts",
   "scripts": {
     "gen": "curl -o spec.json https://api.open.cx/api-json && npx openapi-typescript ./spec.json -o spec.d.ts"
